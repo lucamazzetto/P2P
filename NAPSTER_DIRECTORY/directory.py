@@ -234,7 +234,7 @@ def fndf(c_sock):
 
 # Funzione che registra le statistiche di download
 def dwnl(c_sock):
-    print "RREG: registrazione download."
+    print "DREG: registrazione download."
     psessionId = c_sock.recv(16)
     fileMd5 = c_sock.recv(16)
     #pIp = c_sock.recv(15)
@@ -267,7 +267,7 @@ options = { "LOGI" : logi,
             "ADDF" : addf,
             "DELF" : delf,
             "FIND" : fndf,
-            "RREG" : dwnl}
+            "DREG" : dwnl}
 
 # Funzione che, in base all'identificativo del pacchetto ricevuto, gestisce le connessioni e le funzioni
 def handler_conn(c_sock, ipp, portp):
@@ -279,6 +279,7 @@ def handler_conn(c_sock, ipp, portp):
 
 # Ciclo per la gestione delle connessioni in arrivo.
 while 1:
+    #print s_sock
     c_sock, address = s_sock.accept()
     print "Connessione da: ", address
     #stringa= str(address[0])
