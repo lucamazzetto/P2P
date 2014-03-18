@@ -19,6 +19,7 @@ countSession = 0
 # Creazione della socket di tipo server in ascolto per captare connessioni dai client
 try:
     s_sock = socket(AF_INET6, SOCK_STREAM)
+    s_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     s_sock.bind(("",PORT))
     s_sock.listen(10)
 except error, msg:
@@ -218,6 +219,8 @@ def fndf(c_sock):
             ncopy = "%03d" % len(listFile[i].idsess)
             #print "ncopy ",ncopy
             c_sock.send(listFile[i].md5+listFile[i].nome+ncopy)
+            #print listFile[i].md5
+            #print listFile[i].md5+listFile[i].nome+ncopy
             print "ncopy ",ncopy
             #ciclo sugli id
             for j in range(len(listFile[i].idsess)):
