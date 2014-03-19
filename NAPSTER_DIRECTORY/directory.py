@@ -16,6 +16,7 @@ listSession = []
 listFile = []
 countSession = 0
 
+
 # Creazione della socket di tipo server in ascolto per captare connessioni dai client
 try:
     s_sock = socket(AF_INET6, SOCK_STREAM)
@@ -188,6 +189,7 @@ def delf(c_sock):
 
 # Funzione che si occupa della ricerca di un file all'interno della directory
 def fndf(c_sock):
+    stringa = ""
     print "FIND: richiesta di ricerca."
     psessionId = c_sock.recv(16)
     searchString = c_sock.recv(20)
@@ -210,7 +212,7 @@ def fndf(c_sock):
         #c_sock.send("AFIN")
         nmd5 = "%03d" % len(indici)
     print "nmd5 ",nmd5
-    c_sock.send("AFIN"+nmd5)
+    #c_sock.send("AFIN"+nmd5)
     #se nMD5 != 0 scrivo il resto
     if (len(indici) != 0):
         for i in indici:
@@ -218,7 +220,8 @@ def fndf(c_sock):
             #c_sock.send(listFile[i].nome)
             ncopy = "%03d" % len(listFile[i].idsess)
             #print "ncopy ",ncopy
-            c_sock.send(listFile[i].md5+listFile[i].nome+ncopy)
+            #c_sock.send(listFile[i].md5+listFile[i].nome+ncopy)
+            stringa = stringa+(listFile[i].md5+listFile[i].nome+ncopy)
             #print listFile[i].md5
             #print listFile[i].md5+listFile[i].nome+ncopy
             print "ncopy ",ncopy
@@ -230,10 +233,22 @@ def fndf(c_sock):
                     if listSession[z].sid == listFile[i].idsess[j]:
                         print "Invio ",listSession[z].pip," e porta", listSession[z].pport
                         #c_sock.send(listSession[z].pip)
-                        c_sock.send(listSession[z].pip+listSession[z].pport)
+                        stringa = stringa+(listSession[z].pip+listSession[z].pport)
                         break
     elif(sessionLogin == 0):
         print "Errore: sessione non esistente."
+    stringa2="AFIN"+nmd5+stringa
+    #print stringa2   
+    #c_sock.send("AFIN"+nmd5+stringa)
+    #stringa=""
+    
+    while True:
+        m = stringa2[:1024]
+        c_sock.send(m)
+        stringa2 = stringa2[1024:]
+        if len(m) <1024:
+            break  
+    stringa=""          
 
 # Funzione che registra le statistiche di download
 def dwnl(c_sock):
