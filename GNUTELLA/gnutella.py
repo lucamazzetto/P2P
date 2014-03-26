@@ -5,7 +5,7 @@
 import socket,stat,sys,hashlib,os,threading,thread,time,re
 import random 
 import string 
-mioIP="192.168.001.108"
+mioIP="fd00::22c9:d0ff:fe47:70a3"
 PortaQuery="59000"
 PortaDownload="59001"
 listaPKTIDnear={}
@@ -212,7 +212,7 @@ def generaPKTID(N):
 #------------------------------------------------------------------
 def creazioneSocket(IP,Porta):
 	#apertura socket	
-	peer_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+	peer_socket = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
 	peer_socket.connect((IP,int(Porta)))
 	return peer_socket
 	
@@ -268,7 +268,7 @@ class server(threading.Thread):
 	def run(self):
 		# Create the socket
 		try:
-			mainsocket=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			mainsocket=socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
 			
 			
 			#print ('la socket è creata.')
@@ -436,7 +436,7 @@ class threadRicerca(threading.Thread): #thread che manda pacchetto query a tutti
 		# Create the socket
 		global listaVicini
 		try:
-			self.socketQuery=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			self.socketQuery=socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
 			self.socketQuery.connect((self.ip, int(self.porta)))
 			#print ('la socket è creata.')
 		except:
@@ -463,7 +463,7 @@ class ThreadAscolto(threading.Thread):
 	def run(self):
 		# Create the socket
 		try:
-			self.socketACK=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			self.socketACK=socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
 			self.socketACK.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 			self.socketACK.bind((mioIP, int(self.porta)))
 			#print ('la socket è creata.')
