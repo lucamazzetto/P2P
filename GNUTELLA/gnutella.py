@@ -5,9 +5,9 @@
 import socket,stat,sys,hashlib,os,threading,thread,time,re
 import random 
 import string 
-mioIP="fd00::22c9:d0ff:fe47:70a3"
-PortaQuery="59000"
-PortaDownload="59001"
+mioIP="fd00:0000:0000:0000:22c9:d0ff:fe47:70a3"
+PortaQuery="3000"
+PortaDownload="3001"
 listaPKTIDnear={}
 gestioneRisposte={} #oggetto della classe threadRisposte
 listaVicini={} #lista degli ip e porte dei vicini
@@ -65,13 +65,13 @@ class SalvaParametri:
 #FUNZIONI
 	
 def creaIP(ip):
-	l=ip.split(".")
+	l=ip.split(":")
 	i=0
 	while i<len(l):
-		l[i]="0"*(3-len(l[i]))+l[i]
+		l[i]="0"*(4-len(l[i]))+l[i]
 		i=i+1
 	
-	return str(l[0])+"."+str(l[1])+"."+str(l[2])+"."+str(l[3])
+	return str(l[0])+":"+str(l[1])+":"+str(l[2])+":"+str(l[3])+str(l[4])+":"+str(l[5])+":"+str(l[6])+":"+str(l[7])
 	
 	
 def creaPorta(dim,argomento):
@@ -553,8 +553,8 @@ class threadRisposte(threading.Thread):
 				PKTID=self.socketACK.recv(16)
 				PKTID=controlla16B(16,PKTID)
 				if(ricercaPKTID(PKTID,PKTIDmio)==0):
-					IPparametro=self.socketACK.recv(15)
-					IPparametro=controllaArgomentoStringa(15,IPparametro)
+					IPparametro=self.socketACK.recv(39)
+					IPparametro=controllaArgomentoStringa(39,IPparametro)
 					Portaparametro=self.socketACK.recv(5)
 					Portaparametro=controllaArgomentoStringa(5,Portaparametro)
 					Filemd5=self.socketACK.recv(16)
@@ -572,8 +572,8 @@ class threadRisposte(threading.Thread):
 		if identificativo =="ANEA":
 			PKTID=self.socketACK.recv(16)
 			PKTID=controlla16B(16,PKTID)
-			IPparametro=self.socketACK.recv(15)
-			IPparametro=controllaArgomentoStringa(15,IPparametro)
+			IPparametro=self.socketACK.recv(39)
+			IPparametro=controllaArgomentoStringa(39,IPparametro)
 			Portaparametro=self.socketACK.recv(5)
 			Portaparametro=controllaArgomentoStringa(5,Portaparametro)
 			if ricercaVicini(IPparametro,Portaparametro,listaVicini) ==1:				
@@ -586,8 +586,8 @@ class threadRisposte(threading.Thread):
 			ip=creaIP(self.id)
 			PKTID=self.socketACK.recv(16)
 			PKTID=controlla16B(16,PKTID)
-			IPparametro=self.socketACK.recv(15)
-			IPparametro=controllaArgomentoStringa(15,IPparametro)
+			IPparametro=self.socketACK.recv(39)
+			IPparametro=controllaArgomentoStringa(39,IPparametro)
 			Portaparametro=self.socketACK.recv(5)
 			Portaparametro=controllaArgomentoStringa(5,Portaparametro)
 			TTL=self.socketACK.recv(2)
@@ -623,8 +623,8 @@ class threadRisposte(threading.Thread):
 			#listaPKTID[indicePKTID]=IDpacchetti(PKTID,time.time())
 			#indicePKTID=indicePKTID+1
 					
-			IPparametro=self.socketACK.recv(15)
-			IPparametro=controllaArgomentoStringa(15,IPparametro)
+			IPparametro=self.socketACK.recv(39)
+			IPparametro=controllaArgomentoStringa(39,IPparametro)
 			Portaparametro=self.socketACK.recv(5)
 			Portaparametro=controllaArgomentoStringa(5,Portaparametro)
 			TTL=self.socketACK.recv(2)
