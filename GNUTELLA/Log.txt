@@ -70,3 +70,31 @@
 03/04/2014 09:51:36    ----     Threads partiti
 03/04/2014 09:51:56    ----     Invio QUERL2JSSZC8MAVC893Rfd00:0000:0000:0000:7ed1:c3ff:fe76:362a500003foto                 Vicino fd00:0000:0000:000026fd:52ff:fe7a:6c5a:05000
 03/04/2014 09:51:56    ----     Invio QUERL2JSSZC8MAVC893Rfd00:0000:0000:0000:7ed1:c3ff:fe76:362a500003foto                 Vicino fd00:0000:0000:000026fd:52ff:fe7a:6c5a:05000
+03/04/2014 10:20:05    ----     NUOVA SESSIONE
+03/04/2014 10:20:38    ----     NUOVA SESSIONE
+03/04/2014 10:21:02    ----     Primo vicino: fd00:0000:0000:000026fd:52ff:fe7a:6c5a:05000
+03/04/2014 10:21:05    ----     Secondo vicino: fd00:0000:0000:000026fd:52ff:fe7a:6c5a:05000
+03/04/2014 10:21:05    ----     Threads partiti
+03/04/2014 10:23:10    ----     NUOVA SESSIONE
+03/04/2014 10:23:16    ----     Primo vicino: fd00:0000:0000:000026fd:52ff:fe7a:6c5a:05000
+03/04/2014 10:23:20    ----     Secondo vicino: fd00:0000:0000:000026fd:52ff:fe7a:6c5a:05000
+03/04/2014 10:23:20    ----     Threads partiti
+03/04/2014 14:02:45    ----     NUOVA SESSIONE
+03/04/2014 14:03:05    ----     Primo vicino: fd00:0000:0000:000022c9:d0ff:fe47:70a3:05000
+03/04/2014 14:03:15    ----     Secondo vicino: fd00:0000:0000:000026fd:52ff:fe7a:6c5a:05000
+03/04/2014 14:03:15    ----     Threads partiti
+03/04/2014 14:13:30    ----     NUOVA SESSIONE
+03/04/2014 14:13:44    ----     NUOVA SESSIONE
+03/04/2014 14:14:04    ----     Primo vicino: fd00:0000:0000:000022c9:d0ff:fe47:70a3:05000
+03/04/2014 14:14:12    ----     Secondo vicino: fd00:0000:0000:000026fd:52ff:fe7a:6c5a:05000
+03/04/2014 14:14:12    ----     Threads partiti
+03/04/2014 14:16:51    ----     NUOVA SESSIONE
+03/04/2014 14:16:56    ----     Primo vicino: fd00:0000:0000:000026fd:52ff:fe7a:6c5a:05000
+03/04/2014 14:17:17    ----     Secondo vicino: fd00:0000:0000:000022c9:d0ff:fe47:70a3:05000
+03/04/2014 14:17:17    ----     Threads partiti
+03/04/2014 14:21:10    ----     NUOVA SESSIONE
+03/04/2014 14:21:13    ----     Primo vicino: fd00:0000:0000:000022c9:d0ff:fe47:70a3:05000
+03/04/2014 14:21:25    ----     Secondo vicino: fd00:0000:0000:000026fd:52ff:fe7a:6c5a:05000
+03/04/2014 14:21:25    ----     Threads partiti
+03/04/2014 14:26:48    ----     NUOVA SESSIONE
+03/04/2014 14:26:48    ----     Threads partiti

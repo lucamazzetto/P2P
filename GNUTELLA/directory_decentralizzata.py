@@ -13,6 +13,9 @@ import os
 import time
 #import timeout
 
+global ipr
+global tpr
+
 MY_IP="fd00:0000:0000:0000:7ed1:c3ff:fe76:362a" #"%03d.%03d.%03d.%03d" %(192,168,1,113)
 MY_PORTS="05000" #"%05d" %(5080)
 #MY_PORTC="%05d" %(5081)
@@ -63,7 +66,7 @@ pktRic = []
 lockPktRic = t.allocate_lock()
 
 #path cartella condivisa
-path = "/immagini"
+path = "/immagine"
 
 #lunghezza chunck
 lenchunk = 5000
@@ -81,6 +84,7 @@ def handler_listener():
 	try:
 		s_sock = socket(AF_INET6, SOCK_STREAM)
 		s_sock.bind(("",int(MY_PORTS)))
+
 		s_sock.listen(10)
 		while 1:
 			c_sock, address = s_sock.accept()
@@ -535,7 +539,9 @@ t.start_new_thread(handler_listener, ())
 	#~ listaNeigh.append(Neigh)
 	#~ listaPort.append(Port)
 	#~ add = raw_input("digita 1 per inserire altro vicini, qualunque altra cosa per non inserire")
-listaNeigh.append("fd00:0000:0000:0000:7ed1:c3ff:fe76:362a")
+listaNeigh.append("fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a")
+listaNeigh.append("fd00:0000:0000:0000:22c9:d0ff:fe47:70a3")
+listaPort.append("05000")
 listaPort.append("05000")
 for i in range(0,len(listaNeigh)):
 	print listaNeigh[i]+ " "+ listaPort[i]

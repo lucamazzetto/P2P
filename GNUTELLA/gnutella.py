@@ -6,11 +6,12 @@ import socket,stat,sys,hashlib,os,threading,thread,time,re
 import random 
 import string 
 mioIP="fd00:0000:0000:0000:7ed1:c3ff:fe76:362a"
-PortaQuery="5000"
-PortaDownload="5001"
+PortaQuery="05000"
+PortaDownload="05001"
 listaPKTIDnear={}
 gestioneRisposte={} #oggetto della classe threadRisposte
 listaVicini={} #lista degli ip e porte dei vicini
+
 vicini={} #thread per fare query ai vicini
 indiceParametri=0
 indiceLista=2
@@ -686,19 +687,20 @@ class threadRisposte(threading.Thread):
 #-----------------------------------------------------------------------------------------
 
 scriviLog("NUOVA SESSIONE")
-IP=raw_input("Inserisci IP vicino 1: ") 
-Porta=raw_input("Inserisci Porta vicino 1: ") 
-Porta=creaPorta(5, Porta)
-IP=creaIP(IP) 
+#IP=raw_input("Inserisci IP vicino 1: ") 
+#Porta=raw_input("Inserisci Porta vicino 1: ") 
+Porta=creaPorta(5, "05000")
+IP=creaIP("fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a")
+ 
 listaVicini[0]=Vicini(IP,Porta)
-scriviLog("Primo vicino: "+IP+":"+Porta)
+#scriviLog("Primo vicino: "+IP+":"+Porta)
 
-IP=raw_input("Inserisci IP vicino 2: ") 
-Porta=raw_input("Inserisci Porta vicino 2: ") 
-Porta=creaPorta(5, Porta)
-IP=creaIP(IP)  
+#IP=raw_input("Inserisci IP vicino 2: ") 
+#Porta=raw_input("Inserisci Porta vicino 2: ") 
+Porta=creaPorta(5, "05000")
+IP=creaIP("fd00:0000:0000:0000:22c9:d0ff:fe47:70a3")  
 listaVicini[1]=Vicini(IP,Porta)
-scriviLog("Secondo vicino: "+IP+":"+Porta)
+#scriviLog("Secondo vicino: "+IP+":"+Porta)
 SalvaFile() #salvo i filemd5 e filename che voglio condividere
 j=0
 #faccio partire il thread del server per stare in ascolto di possibili download
@@ -750,6 +752,7 @@ while 1:
 			try:
 				socketVicino1=creazioneSocket(listaVicini[0].IP,listaVicini[0].PORTA)	
 				socketVicino2=creazioneSocket(listaVicini[1].IP,listaVicini[1].PORTA)
+                
 				PKTID=generaPKTID(16)
 				PKTID=controlla16B(16,PKTID)	
 				pacchetto=near(PKTID,mioIP,PortaQuery,TTL) #creazione pacchetto NEAR
