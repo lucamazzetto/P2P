@@ -5,9 +5,9 @@
 import socket,stat,sys,hashlib,os,threading,thread,time,re
 import random 
 import string 
-mioIP="fd00:0000:0000:0000:22c9:d0ff:fe47:70a3"
-PortaQuery="3000"
-PortaDownload="3001"
+mioIP="fd00:0000:0000:0000:7ed1:c3ff:fe76:362a"
+PortaQuery="5000"
+PortaDownload="5001"
 listaPKTIDnear={}
 gestioneRisposte={} #oggetto della classe threadRisposte
 listaVicini={} #lista degli ip e porte dei vicini
