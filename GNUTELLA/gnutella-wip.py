@@ -10,7 +10,7 @@
 import socket,stat,sys,hashlib,os,threading,thread,time,re
 import random 
 import string 
-mioIP="fd00:0000:0000:0000:7ed1:c3ff:fe76:362a"
+mioIP="fd00:0000:0000:0000:22c9:d0ff:fe47:70a3"
 PortaQuery="03000"
 PortaDownload="03001"
 listaPKTIDnear={}
@@ -87,6 +87,27 @@ def creaIP(ip):
 			k=k+diff+1
 	#print v		
 	return str(v[0])+":"+str(v[1])+":"+str(v[2])+":"+str(v[3])+":"+str(v[4])+":"+str(v[5])+":"+str(v[6])+":"+str(v[7])
+	
+def elimina_asterischi(stringa):
+        
+        ritorno = ""
+        ritorno2 = ""
+        lettera = False
+        lettera2 = False
+        for i in range (0, len(stringa)):
+            if(stringa[i] != "*" or lettera == True):
+                ritorno = ritorno + stringa[i]
+                lettera = True
+       
+        ritorno = ritorno[::-1]
+    
+        for i in range (0,len(ritorno)):
+            if(ritorno[i]!="*" or lettera2==True):
+                ritorno2=ritorno2+ritorno[i]
+                lettera2 = True
+    
+        return ritorno2[::-1]
+
 	
 	
 def creaPorta(dim,argomento):
@@ -645,13 +666,14 @@ class threadRisposte(threading.Thread):
 			#indicePKTID=indicePKTID+1
 					
 			IPparametro=self.socketACK.recv(39)
-			IPparametro=controllaArgomentoStringa(39,IPparametro)
+			#IPparametro=controllaArgomentoStringa(39,IPparametro)
 			Portaparametro=self.socketACK.recv(5)
-			Portaparametro=controllaArgomentoStringa(5,Portaparametro)
+			#Portaparametro=controllaArgomentoStringa(5,Portaparametro)
 			TTL=self.socketACK.recv(2)
-			TTL=controllaDimensione(TTL)
-			Ricerca=self.socketACK.recv(20)
-			Ricerca=controllaArgomentoStringa(20,Ricerca)	
+			#TTL=controllaDimensione(TTL)
+			Ricerca1=self.socketACK.recv(20)
+			Ricerca=elimina_asterischi(Ricerca1)
+			#Ricerca=controllaArgomentoStringa(20,Ricerca)	
 			pacchettoR=identificativo+PKTID+IPparametro+Portaparametro+TTL+Ricerca
 			#print "Pacchetto QUER ricevuto dal peer ", self.id," : ",PKTID," ",IPparametro," ",Portaparametro," ",Ricerca," ",TTL	
 			if ricercaPKTID(PKTID,listaPKTID)==1 : #pktid non esistente
@@ -709,8 +731,8 @@ class threadRisposte(threading.Thread):
 scriviLog("NUOVA SESSIONE")
 #IP=raw_input("Inserisci IP vicino 1: ") 
 #Porta=raw_input("Inserisci Porta vicino 1: ") 
-Porta=creaPorta(5, "3000")
-IP=creaIP("fd00:0000:0000:0000:8896:7854:b792:1bd1") 
+Porta=creaPorta(5, "03331")
+IP=creaIP("fd00::021e:ecff:fe85:6d5c") 
 listaVicini[0]=Vicini(IP,Porta)
 scriviLog("Primo vicino: "+IP+":"+Porta)
 
