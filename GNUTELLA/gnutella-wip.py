@@ -2,19 +2,23 @@
 # -*- coding: UTF-8 -*-
 #gnutella
 
+#guerra fd00:0000:0000:0000:22c9:d0ff:fe47:70a3
+#mazz fd00:0000:0000:0000:8896:7854:b792:1bd1
+#io fd00:0000:0000:0000:7ed1:c3ff:fe76:362a
+
+
 import socket,stat,sys,hashlib,os,threading,thread,time,re
 import random 
 import string 
 mioIP="fd00:0000:0000:0000:7ed1:c3ff:fe76:362a"
-PortaQuery="05000"
-PortaDownload="05001"
+PortaQuery="03000"
+PortaDownload="03001"
 listaPKTIDnear={}
 gestioneRisposte={} #oggetto della classe threadRisposte
 listaVicini={} #lista degli ip e porte dei vicini
-
 vicini={} #thread per fare query ai vicini
 indiceParametri=0
-indiceLista=2
+indiceLista=1
 parametri={}
 listaPKTID={}  #lista dei PKTID ricevuti nel pacchetto query
 indicePKTID=0
@@ -67,12 +71,22 @@ class SalvaParametri:
 	
 def creaIP(ip):
 	l=ip.split(":")
+	diff=8-len(l)
+	n="0000:0000:0000:0000:0000:0000:0000:0000"
+	v=n.split(":")
 	i=0
+	k=0
 	while i<len(l):
-		l[i]="0"*(4-len(l[i]))+l[i]
-		i=i+1
-	
-	return str(l[0])+":"+str(l[1])+":"+str(l[2])+":"+str(l[3])+str(l[4])+":"+str(l[5])+":"+str(l[6])+":"+str(l[7])
+		
+		if l[i]!='':
+			v[k]=l[i]
+			i=i+1
+			k=k+1
+		else:
+			i=i+1
+			k=k+diff+1
+	#print v		
+	return str(v[0])+":"+str(v[1])+":"+str(v[2])+":"+str(v[3])+":"+str(v[4])+":"+str(v[5])+":"+str(v[6])+":"+str(v[7])
 	
 	
 def creaPorta(dim,argomento):
@@ -530,6 +544,7 @@ class threadRisposte(threading.Thread):
 		threading.Thread.__init__(self)
 		self.id=id
 		self.socketACK=socket
+		self.socketACK.setblocking(1)
 		self.server=server		
 		
 
@@ -543,6 +558,7 @@ class threadRisposte(threading.Thread):
 		global listaPKTIDnear
 		global listaVicini
 		global spegniRicerca
+		global identificativo
 		identificativo=self.socketACK.recv(4)#146B per ogni riga
 		if not identificativo:
 			print "ERRORE RICEZIONE PACCHETTO"
@@ -577,9 +593,13 @@ class threadRisposte(threading.Thread):
 			IPparametro=controllaArgomentoStringa(39,IPparametro)
 			Portaparametro=self.socketACK.recv(5)
 			Portaparametro=controllaArgomentoStringa(5,Portaparametro)
-			if ricercaVicini(IPparametro,Portaparametro,listaVicini) ==1:				
+			print ricercaVicini(IPparametro,Portaparametro,listaVicini)
+			if ricercaVicini(IPparametro,Portaparametro,listaVicini) ==1:
+				print "Entrato nell'if"				
 				listaVicini[indiceLista]=Vicini(IPparametro,Portaparametro)
+				print "OK1"
 				indiceLista=indiceLista+1
+				print "OK2"
 			print "Pacchetto ANEA ricevuto dal peer ", self.id," : ",PKTID," ",IPparametro," ",Portaparametro
 			
 			
@@ -689,17 +709,16 @@ class threadRisposte(threading.Thread):
 scriviLog("NUOVA SESSIONE")
 #IP=raw_input("Inserisci IP vicino 1: ") 
 #Porta=raw_input("Inserisci Porta vicino 1: ") 
-Porta=creaPorta(5, "05000")
-IP=creaIP("fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a")
- 
+Porta=creaPorta(5, "3000")
+IP=creaIP("fd00:0000:0000:0000:8896:7854:b792:1bd1") 
 listaVicini[0]=Vicini(IP,Porta)
-#scriviLog("Primo vicino: "+IP+":"+Porta)
+scriviLog("Primo vicino: "+IP+":"+Porta)
 
 #IP=raw_input("Inserisci IP vicino 2: ") 
 #Porta=raw_input("Inserisci Porta vicino 2: ") 
-Porta=creaPorta(5, "05000")
-IP=creaIP("fd00:0000:0000:0000:22c9:d0ff:fe47:70a3")  
-listaVicini[1]=Vicini(IP,Porta)
+#Porta=creaPorta(5, "3000")
+#IP=creaIP("fd00:0000:0000:0000:22c9:d0ff:fe47:70a3")  
+#listaVicini[1]=Vicini(IP,Porta)
 #scriviLog("Secondo vicino: "+IP+":"+Porta)
 SalvaFile() #salvo i filemd5 e filename che voglio condividere
 j=0
@@ -746,20 +765,19 @@ while 1:
 				i=i+1				
 				
 		if scelta=="2" :#ricerca vicini
-			indiceLista=2
+			indiceLista=1
 			TTL=raw_input("Inserisci Time to live (TTL) per i vicini: ")
 			TTL=controllaDimensione(TTL)
 			try:
 				socketVicino1=creazioneSocket(listaVicini[0].IP,listaVicini[0].PORTA)	
-				socketVicino2=creazioneSocket(listaVicini[1].IP,listaVicini[1].PORTA)
-                
+				#socketVicino2=creazioneSocket(listaVicini[1].IP,listaVicini[1].PORTA)
 				PKTID=generaPKTID(16)
 				PKTID=controlla16B(16,PKTID)	
 				pacchetto=near(PKTID,mioIP,PortaQuery,TTL) #creazione pacchetto NEAR
 				socketVicino1.send(pacchetto)
-				socketVicino2.send(pacchetto)	
+				#socketVicino2.send(pacchetto)	
 				socketVicino1.close()
-				socketVicino2.close()	
+				#socketVicino2.close()	
 			except:
 				print "Il nodo si è disconnesso."
 			
