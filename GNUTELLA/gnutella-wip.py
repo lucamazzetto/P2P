@@ -731,8 +731,8 @@ class threadRisposte(threading.Thread):
 scriviLog("NUOVA SESSIONE")
 #IP=raw_input("Inserisci IP vicino 1: ") 
 #Porta=raw_input("Inserisci Porta vicino 1: ") 
-Porta=creaPorta(5, "03331")
-IP=creaIP("fd00::021e:ecff:fe85:6d5c") 
+Porta=creaPorta(5, "03000")
+IP=creaIP("fd00::7ed1:c3ff:fe76:362a") 
 listaVicini[0]=Vicini(IP,Porta)
 scriviLog("Primo vicino: "+IP+":"+Porta)
 
