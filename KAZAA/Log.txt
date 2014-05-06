@@ -367,3 +367,27 @@
 06/05/2014 16:53:44    ----     Inviato LOGO5KKCA1LQWODVFO7F
 06/05/2014 16:53:44    ----     Ricevuto ALGO000
 06/05/2014 17:02:05    ----     NUOVA SESSIONE super PEER
+06/05/2014 17:05:35    ----     NUOVA SESSIONE PEER
+06/05/2014 17:05:40    ----     Primo vicino: fd00:0000:0000:0000:22c9:d0ff:fe47:70a3:03000
+06/05/2014 17:05:40    ----     Thread ascolto partito
+06/05/2014 17:07:37    ----     NUOVA SESSIONE PEER
+06/05/2014 17:07:48    ----     Primo vicino: fd00:0000:0000:0000:22c9:d0ff:fe47:70a3:03000
+06/05/2014 17:07:48    ----     Thread ascolto partito
+06/05/2014 17:07:53    ----     Inviato: SUPEQW9H661RZXU59D92fd00:0000:0000:0000:7ed1:c3ff:fe76:362a0300005
+06/05/2014 17:07:58    ----     Ricevuto ASUP dal peer fd00::e89b:f565:afbb:ee30 : QW9H661RZXU59D92 fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000
+06/05/2014 17:07:58    ----     Super Peer aggiunto: fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000
+06/05/2014 17:09:37    ----     NUOVA SESSIONE PEER
+06/05/2014 17:09:44    ----     Primo vicino: fd00:0000:0000:0000:22c9:d0ff:fe47:70a3:03000
+06/05/2014 17:09:44    ----     Thread ascolto partito
+06/05/2014 17:09:50    ----     Inviato: SUPE8M40HSNTSFBR0GPVfd00:0000:0000:0000:7ed1:c3ff:fe76:362a0300005
+06/05/2014 17:09:51    ----     Ricevuto ASUP dal peer fd00::e89b:f565:afbb:ee30 : 8M40HSNTSFBR0GPV fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000
+06/05/2014 17:09:51    ----     Super Peer aggiunto: fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000
+06/05/2014 17:09:53    ----     Provo a loggarmi ad fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000
+06/05/2014 17:10:34    ----     NUOVA SESSIONE PEER
+06/05/2014 17:10:38    ----     Primo vicino: fd00:0000:0000:0000:22c9:d0ff:fe47:70a3:03000
+06/05/2014 17:10:38    ----     Thread ascolto partito
+06/05/2014 17:10:42    ----     Inviato: SUPEMK7A70YLK9FCNARCfd00:0000:0000:0000:7ed1:c3ff:fe76:362a0300005
+06/05/2014 17:10:43    ----     Ricevuto ASUP dal peer fd00::e89b:f565:afbb:ee30 : MK7A70YLK9FCNARC fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000
+06/05/2014 17:10:43    ----     Super Peer aggiunto: fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000
+06/05/2014 17:10:45    ----     Provo a loggarmi ad fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000
+06/05/2014 17:10:45    ----     Loggato a fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000

@@ -2,12 +2,16 @@
 # -*- coding: UTF-8 -*-
 #progetto3
 
+#io  			fd00:0000:0000:0000:7ed1:c3ff:fe76:362a
+#guerra 		fd00:0000:0000:0000:22c9:d0ff:fe47:70a3
+#mazzetto		fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a
+
 import socket,stat,sys,hashlib,os,threading,thread,time,re
 from random import * 
 import random
 import string 
-mioIP="fd00:0000:0000:0000:22c9:d0ff:fe47:70a3"
-PortaQuery="3000"
+mioIP="fd00:0000:0000:0000:7ed1:c3ff:fe76:362a"
+PortaQuery="03000"
 #PortaQuery="3000"
 gestioneRisposte={} #oggetto della classe threadRisposte
 gestioneRisposte20s={}
@@ -1298,7 +1302,7 @@ if scelta=="2": #PEER
 	scriviLog("Thread ascolto partito")
 	
 	
-	if raw_input("Confermi il super peer3000?  [y/n] ").lower() == "y":
+	if raw_input("Confermi il super peer?  [y/n] ").lower() == "y":
 		TTL=raw_input("Inserisci Time to live (TTL) per i vicini: ")
 		TTL=controllaDimensione(TTL)
 		PKTID=generaPKTID(16)
@@ -1335,7 +1339,7 @@ if scelta=="2": #PEER
 		PortaP2P=listaSuperPeer[0].PORTA
 		scriviLog("Provo a loggarmi ad "+IPP2P+" "+PortaP2P)
 		#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-		peer_socket=creazioneSocket(IPP2P,"3000")  ###########################################
+		peer_socket=creazioneSocket(IPP2P,"03000")  ###########################################
 		peer_socket= logi(peer_socket,mioIP,PortaQuery)	
 		#risposta al login
 		risposta=leggi(peer_socket,20) 
