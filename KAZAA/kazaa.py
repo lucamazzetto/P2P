@@ -8,7 +8,7 @@ import random
 import string 
 mioIP="fd00:0000:0000:0000:22c9:d0ff:fe47:70a3"
 PortaQuery="50000"
-#PortaQuery="00080"
+#PortaQuery="50000"
 gestioneRisposte={} #oggetto della classe threadRisposte
 gestioneRisposte20s={}
 listaVicini={} #lista degli ip e porte dei vicini
@@ -129,6 +129,25 @@ def creaIP(ip):
 			k=k+diff+1
 	#print v		
 	return str(v[0])+":"+str(v[1])+":"+str(v[2])+":"+str(v[3])+":"+str(v[4])+":"+str(v[5])+":"+str(v[6])+":"+str(v[7])
+def elimina_asterischi(stringa):
+        
+        ritorno = ""
+        ritorno2 = ""
+        lettera = False
+        lettera2 = False
+        for i in range (0, len(stringa)):
+            if(stringa[i] != "*" or lettera == True):
+                ritorno = ritorno + stringa[i]
+                lettera = True
+       
+        ritorno = ritorno[::-1]
+    
+        for i in range (0,len(ritorno)):
+            if(ritorno[i]!="*" or lettera2==True):
+                ritorno2=ritorno2+ritorno[i]
+                lettera2 = True
+    
+        return ritorno2[::-1]
 	
 	
 #stampa una lista
@@ -413,7 +432,7 @@ class ThreadAscolto(threading.Thread):
 			return False			
 
 		# Share it with the class
-		self.socketACK.settimeout(20)
+		self.socketACK.settimeout(100)
 		while self.acceso:
 			
 			try:				
@@ -425,13 +444,13 @@ class ThreadAscolto(threading.Thread):
 			except socket.timeout:
 				print "Tempo scaduto.....cancellazione pacchetti in corso.."	
 				tempo=time.time()
-				cancellaPacchettiScaduti(listaPKTID,tempo,20) #lista pktid:pktid dei quer che ritrasmetto
-				cancellaPacchettiScaduti(listaPKTIDsupe,tempo,20)#lista pktidsupe:pktid dei supe che ritrasmetto
+				cancellaPacchettiScaduti(listaPKTID,tempo,500) #lista pktid:pktid dei quer che ritrasmetto
+				cancellaPacchettiScaduti(listaPKTIDsupe,tempo,500)#lista pktidsupe:pktid dei supe che ritrasmetto
 				#cancellaPacchettiScaduti(PKTIDmio,tempo,20)
 				print				
 				print 
 				#cancellaPacchettiScaduti(PKTIDmio,tempo)
-				self.socketACK.settimeout(20)
+				self.socketACK.settimeout(100)
 				#client_socket.send("tempo scaduto")		
 	def log(self, msg):
 		print(msg)
@@ -457,6 +476,7 @@ class threadRisposte(threading.Thread):
 		threading.Thread.__init__(self)
 		self.id=id
 		self.socketACK=socket
+		self.socketACK.setblocking(1)
 		self.server=server
 	# The running method
 	def run(self):	
@@ -599,7 +619,8 @@ class threadRisposte(threading.Thread):
 			Portaparametro=controllaArgomentoStringa(5,Portaparametro)
 			TTL=leggi(self.socketACK,2)
 			TTL=controllaDimensione(TTL)
-			Ricerca=leggi(self.socketACK,20)
+			Ricerca1=leggi(self.socketACK,20)
+			Ricerca=elimina_asterischi(Ricerca1)
 			Ricerca=controllaArgomentoStringa(20,Ricerca)	
 			Ricerca=Ricerca.strip()
 			pacchettoR=identificativo+PKTID+IPparametro+Portaparametro+TTL+Ricerca
@@ -774,7 +795,8 @@ class threadRisposte(threading.Thread):
 								pacchetto= pacchetto+ipp.IP+ipp.PORTA
 								pacchettoPrint=pacchettoPrint+" ip:"+ipp.IP+" porta:"+ipp.PORTA+"\n"
 						scriviLog("Inviato "+pacchetto)
-						print pacchettoPrint			
+						print pacchettoPrint
+				print pacchetto					
 				self.socketACK.send(pacchetto)				
 				
 				listaPKTIDquerFind={} #azzero la lista listaPKTIDquerFind				
@@ -1091,12 +1113,12 @@ if scelta=="1": #SUPER PEER
 	listaVicini[0]=Vicini(IP,Porta)
 	scriviLog("Primo vicino: "+IP+":"+Porta)
 
-	IP=raw_input("Inserisci IP vicino 2: ") 
-	Porta=raw_input("Inserisci Porta vicino 2: ") 
-	Porta=controllaArgomentoNumero(5,Porta)
-	IP=creaIP(IP)  
-	listaVicini[1]=Vicini(IP,Porta)
-	scriviLog("Secondo vicino: "+IP+":"+Porta)
+	#IP=raw_input("Inserisci IP vicino 2: ") 
+	#Porta=raw_input("Inserisci Porta vicino 2: ") 
+	#Porta=controllaArgomentoNumero(5,Porta)
+	#IP=creaIP(IP)  
+	#listaVicini[1]=Vicini(IP,Porta)
+	#scriviLog("Secondo vicino: "+IP+":"+Porta)
 	SalvaFile() #salvo i filemd5 e filename che voglio condividere
 	lista=(os.listdir('./immagine')	)
 	i=0
@@ -1265,12 +1287,12 @@ if scelta=="2": #PEER
 	listaVicini[0]=Vicini(IP,Porta)
 	scriviLog("Primo vicino: "+IP+":"+Porta)
 
-	IP=raw_input("Inserisci IP vicino 2: ") 
-	Porta=raw_input("Inserisci Porta vicino 2: ") 
-	Porta=controllaArgomentoNumero(5,Porta)
-	IP=creaIP(IP)  
-	listaVicini[1]=Vicini(IP,Porta)
-	scriviLog("Secondo vicino: "+IP+":"+Porta)
+	#IP=raw_input("Inserisci IP vicino 2: ") 
+	#Porta=raw_input("Inserisci Porta vicino 2: ") 
+	#Porta=controllaArgomentoNumero(5,Porta)
+	#IP=creaIP(IP)  
+	#listaVicini[1]=Vicini(IP,Porta)
+	#scriviLog("Secondo vicino: "+IP+":"+Porta)
 	ascolto=ThreadAscolto(PortaQuery)
 	ascolto.start()
 	scriviLog("Thread ascolto partito")
@@ -1294,15 +1316,15 @@ if scelta=="2": #PEER
 			#socketVicino2.close()
 		except:
 			print "Il nodo 1 si è disconnesso."
-		try:
-			print "Vicino 2: ",listaVicini[1].IP
-			socketVicino2=creazioneSocket(listaVicini[1].IP,listaVicini[1].PORTA)	
-			socketVicino2.send(pacchetto)	
-			socketVicino2.close()
-			print "Mandato SUPE al nodo 2."
-			scriviLog("Inviato: "+pacchetto)
-		except:
-			print "Il nodo 2 si è disconnesso."	
+		#try:
+		#	print "Vicino 2: ",listaVicini[1].IP
+		#	socketVicino2=creazioneSocket(listaVicini[1].IP,listaVicini[1].PORTA)	
+		#	socketVicino2.send(pacchetto)	
+		#	socketVicino2.close()
+		#	print "Mandato SUPE al nodo 2."
+		#	scriviLog("Inviato: "+pacchetto)
+		#except:
+		#	print "Il nodo 2 si è disconnesso."	
 	
 	#LOGIN:
 	if raw_input("Login?  [y/n] ").lower() == "y":
@@ -1313,7 +1335,7 @@ if scelta=="2": #PEER
 		PortaP2P=listaSuperPeer[0].PORTA
 		scriviLog("Provo a loggarmi ad "+IPP2P+" "+PortaP2P)
 		#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-		peer_socket=creazioneSocket(IPP2P,"00080")  ###########################################
+		peer_socket=creazioneSocket(IPP2P,"50000")  ###########################################
 		peer_socket= logi(peer_socket,mioIP,PortaQuery)	
 		#risposta al login
 		risposta=leggi(peer_socket,20) 
@@ -1357,7 +1379,7 @@ if scelta=="2": #PEER
 			
 			if scelta=="1": #aggiunta file
 				#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-				peer_socket=creazioneSocket(IPP2P,"00080") ##################################
+				peer_socket=creazioneSocket(IPP2P,"5000050000") ##################################
 				print "aggiunta file in corso....."
 				percorsoFile="./immagine/"				
 				Filename=raw_input("Inserisci nome del file da aggiungere: ")				
@@ -1373,7 +1395,7 @@ if scelta=="2": #PEER
 		#...........................................................................................................		
 			if scelta=="2" :#rimozione file
 				#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-				peer_socket=creazioneSocket(IPP2P,"00080")  ########################################
+				peer_socket=creazioneSocket(IPP2P,"50000")  ########################################
 				print "rimozione file in corso......."
 				percorsoFile="./immagine/"
 				Filename=raw_input("Inserisci nome del file.estensione da eliminare: ")
@@ -1387,7 +1409,7 @@ if scelta=="2": #PEER
 			if scelta=="3": #ricerca file
 				indice=0
 				#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-				peer_socket=creazioneSocket(IPP2P,"00080")  #############################################
+				peer_socket=creazioneSocket(IPP2P,"50000")  #############################################
  				print "ricerca file in corso....."
 				Ricerca=raw_input("Inserisci stringa di ricerca del file: ")
 				find(peer_socket,SessionID,Ricerca)
@@ -1423,7 +1445,7 @@ if scelta=="2": #PEER
 					conta2=1
 					stampa1=Filename.strip()
 					while int(ncopy)>=conta2:					
-						risposta=leggi(peer_socket,20)							
+						risposta=leggi(peer_socket,44)							
 						IPP2PaltroPeer=risposta[0:39]
 						PortaP2PaltroPeer=risposta[39:44]
 						conta2=conta2+1
@@ -1476,7 +1498,7 @@ if scelta=="2": #PEER
 			#..................................................................................
 			if scelta== "5": #Logout
 				#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-				peer_socket=creazioneSocket(IPP2P,"00080")   ##################################################
+				peer_socket=creazioneSocket(IPP2P,"50000")   ##################################################
 				print "logout....."
 				logo(peer_socket,SessionID)
 				scriviLog("Inviato LOGO"+SessionID)

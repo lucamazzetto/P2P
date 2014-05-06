@@ -1,0 +1,199 @@
+06/05/2014 14:23:08    ----     NUOVA SESSIONE super PEER
+06/05/2014 14:27:45    ----     NUOVA SESSIONE super PEER
+06/05/2014 14:27:59    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 14:28:25    ----     NUOVA SESSIONE super PEER
+06/05/2014 14:28:31    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 14:28:31    ----     Threads partiti
+06/05/2014 14:29:43    ----     NUOVA SESSIONE super PEER
+06/05/2014 14:29:48    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 14:29:48    ----     Threads partiti
+06/05/2014 14:32:46    ----     NUOVA SESSIONE super PEER
+06/05/2014 14:32:50    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 14:32:50    ----     Threads partiti
+06/05/2014 14:35:25    ----     NUOVA SESSIONE super PEER
+06/05/2014 14:35:28    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 14:35:28    ----     Threads partiti
+06/05/2014 14:40:24    ----     NUOVA SESSIONE PEER
+06/05/2014 14:40:28    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 14:40:28    ----     Thread ascolto partito
+06/05/2014 14:46:59    ----     NUOVA SESSIONE super PEER
+06/05/2014 14:47:15    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 14:47:15    ----     Threads partiti
+06/05/2014 14:48:13    ----     NUOVA SESSIONE super PEER
+06/05/2014 14:48:18    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 14:48:18    ----     Threads partiti
+06/05/2014 14:49:59    ----     NUOVA SESSIONE super PEER
+06/05/2014 14:50:02    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 14:50:02    ----     Threads partiti
+06/05/2014 14:55:35    ----     NUOVA SESSIONE super PEER
+06/05/2014 14:55:44    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 14:55:44    ----     Threads partiti
+06/05/2014 14:57:14    ----     NUOVA SESSIONE super PEER
+06/05/2014 14:57:19    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 14:57:19    ----     Threads partiti
+06/05/2014 14:58:19    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000 TTL:29
+06/05/2014 14:58:19    ----     Invio ASUP7IGXLWYDTQAHKVWQfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:00:21    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:00:24    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:00:24    ----     Threads partiti
+06/05/2014 15:00:57    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:00:57    ----     Invio ASUPM6MLRPNUHPDLUEFAfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:00:57    ----     Invio SUPEM6MLRPNUHPDLUEFAfd00:0000:0000:0000:7ed1:c3ff:fe76:362a5000002 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:02:03    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:02:07    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:02:07    ----     Threads partiti
+06/05/2014 15:02:09    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:02:09    ----     Invio ASUPCDMJXFMXK95ATG4Lfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:02:09    ----     Invio SUPECDMJXFMXK95ATG4Lfd00:0000:0000:0000:7ed1:c3ff:fe76:362a5000002 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:03:39    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:03:43    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:03:43    ----     Threads partiti
+06/05/2014 15:03:54    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:03:54    ----     Invio ASUP2YW4RB2J7XPRYFU9fd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:03:54    ----     Invio SUPE2YW4RB2J7XPRYFU9fd00:0000:0000:0000:7ed1:c3ff:fe76:362a5000002 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:03:56    ----     Ricevuto LOGI da fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:03:56    ----     Inviato ALGIO4D390S9E5QYH7MY a fd00:0000:0000:0000:7ed1:c3ff:fe76:362a : 50000
+06/05/2014 15:05:20    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:05:26    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:05:26    ----     Threads partiti
+06/05/2014 15:05:38    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:05:38    ----     Invio ASUPNFOAZEVMLK13U3V0fd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:05:38    ----     Invio SUPENFOAZEVMLK13U3V0fd00:0000:0000:0000:7ed1:c3ff:fe76:362a5000002 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:05:40    ----     Ricevuto LOGI da fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:05:40    ----     Inviato ALGIF1PETHUQEQUOVPIM a fd00:0000:0000:0000:7ed1:c3ff:fe76:362a : 50000
+06/05/2014 15:05:45    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000 TTL:29
+06/05/2014 15:05:45    ----     Invio ASUPTX1XEONI0UJBPTWGfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:06:51    ----     Ricevuto LOGI da fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:06:51    ----     Inviato ALGIDCX7JXRX4EKYAOEA a fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a : 50000
+06/05/2014 15:09:52    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:10:00    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:10:00    ----     Threads partiti
+06/05/2014 15:10:05    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:10:05    ----     Invio ASUPGPN4PVGDQCUIAVFQfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:10:05    ----     Invio SUPEGPN4PVGDQCUIAVFQfd00:0000:0000:0000:7ed1:c3ff:fe76:362a5000002 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:10:07    ----     Ricevuto LOGI da fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:10:07    ----     Inviato ALGIKEELF9F1JKX9TST3 a fd00:0000:0000:0000:7ed1:c3ff:fe76:362a : 50000
+06/05/2014 15:10:12    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000 TTL:39
+06/05/2014 15:10:12    ----     Invio ASUPF6F5JCRGGNGTO5NVfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:10:18    ----     Ricevuto LOGI da fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:10:18    ----     Inviato ALGILG7YVP1VIC1YA6KD a fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a : 50000
+06/05/2014 15:10:50    ----     Arrivato FINDKEELF9F1JKX9TST3iodal peer: fd00:0000:0000:0000:7ed1:c3ff:fe76:362a
+06/05/2014 15:11:10    ----     Inviato AFIN001ÝÅ§=œælð¡TàÔJîkio.jpeg                                                                                             001fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a50000
+06/05/2014 15:13:03    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:13:08    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:13:08    ----     Threads partiti
+06/05/2014 15:13:15    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:13:15    ----     Invio ASUPMU5TPXEX1W25HH99fd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:13:15    ----     Invio SUPEMU5TPXEX1W25HH99fd00:0000:0000:0000:7ed1:c3ff:fe76:362a5000002 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:13:18    ----     Ricevuto LOGI da fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:13:18    ----     Inviato ALGIT5CAEDHIN31H03F8 a fd00:0000:0000:0000:7ed1:c3ff:fe76:362a : 50000
+06/05/2014 15:13:34    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000 TTL:39
+06/05/2014 15:13:34    ----     Invio ASUPZ0GPNCFVYV6AG1HXfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:13:39    ----     Ricevuto LOGI da fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:13:39    ----     Inviato ALGI9VNAZ8LSP67TMLCN a fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a : 50000
+06/05/2014 15:13:57    ----     Arrivato FINDT5CAEDHIN31H03F8iodal peer: fd00:0000:0000:0000:7ed1:c3ff:fe76:362a
+06/05/2014 15:14:17    ----     Inviato AFIN001ÝÅ§=œælð¡TàÔJîkio.jpeg                                                                                             001fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a50000
+06/05/2014 15:25:52    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:25:56    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:25:56    ----     Threads partiti
+06/05/2014 15:26:03    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:26:03    ----     Invio ASUPSONH84MY071ORS8Mfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:26:03    ----     Invio SUPESONH84MY071ORS8Mfd00:0000:0000:0000:7ed1:c3ff:fe76:362a5000002 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:26:04    ----     Ricevuto LOGI da fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:26:04    ----     Inviato ALGIZXG6KFD7LJH2QCDP a fd00:0000:0000:0000:7ed1:c3ff:fe76:362a : 50000
+06/05/2014 15:27:23    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:27:27    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:27:27    ----     Threads partiti
+06/05/2014 15:27:33    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000 TTL:29
+06/05/2014 15:27:33    ----     Invio ASUP3CHMC086WA9JIA86fd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:27:48    ----     Ricevuto LOGI da fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:27:48    ----     Inviato ALGIKBYKLJZ7WC6KOB73 a fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a : 50000
+06/05/2014 15:28:16    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:28:16    ----     Invio ASUP3E1WPLRRZERJU5WLfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:28:16    ----     Invio SUPE3E1WPLRRZERJU5WLfd00:0000:0000:0000:7ed1:c3ff:fe76:362a5000002 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:28:18    ----     Ricevuto LOGI da fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:28:18    ----     Inviato ALGIWNWEZ6NIOZJTH6EL a fd00:0000:0000:0000:7ed1:c3ff:fe76:362a : 50000
+06/05/2014 15:28:41    ----     Arrivato FINDWNWEZ6NIOZJTH6ELiodal peer: fd00:0000:0000:0000:7ed1:c3ff:fe76:362a
+06/05/2014 15:29:01    ----     Inviato AFIN001ÝÅ§=œælð¡TàÔJîkio.jpeg                                                                                             001fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a50000
+06/05/2014 15:33:21    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:33:25    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:33:25    ----     Threads partiti
+06/05/2014 15:34:37    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:34:41    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:34:41    ----     Threads partiti
+06/05/2014 15:35:49    ----     Ricevuto SUPE da fd00::8977:2558:6aa7:ddd7 : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000 TTL:04
+06/05/2014 15:35:49    ----     Invio ASUPDXPG7TW6ZFYPM31Xfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:35:54    ----     Ricevuto LOGI da fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:35:54    ----     Inviato ALGI2ZNZ554EPLIARQQH a fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a : 50000
+06/05/2014 15:36:50    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:36:55    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:36:55    ----     Threads partiti
+06/05/2014 15:37:27    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:37:27    ----     Invio ASUPFS3RUASDKNEXD60Qfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:37:27    ----     Invio SUPEFS3RUASDKNEXD60Qfd00:0000:0000:0000:7ed1:c3ff:fe76:362a5000002 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:37:30    ----     Ricevuto LOGI da fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:37:30    ----     Inviato ALGI2M3PWKRFQSU6REF1 a fd00:0000:0000:0000:7ed1:c3ff:fe76:362a : 50000
+06/05/2014 15:37:42    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000 TTL:04
+06/05/2014 15:37:42    ----     Invio ASUP5SYN5W0AX25M6DVBfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:38:26    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000 TTL:49
+06/05/2014 15:38:26    ----     Invio ASUPT31THJ2YFRW5I0R9fd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:38:27    ----     Ricevuto LOGI da fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:38:27    ----     Inviato ALGIN6HF0RO1C8B1KX1P a fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a : 50000
+06/05/2014 15:38:42    ----     Arrivato FIND2M3PWKRFQSU6REF1iodal peer: fd00:0000:0000:0000:7ed1:c3ff:fe76:362a
+06/05/2014 15:39:02    ----     Inviato AFIN001ÝÅ§=œælð¡TàÔJîkio.jpeg                                                                                             001fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a50000
+06/05/2014 15:40:31    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:40:34    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:40:34    ----     Threads partiti
+06/05/2014 15:40:42    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:40:42    ----     Invio ASUPBCRMJ6QYBQ65UZ9Rfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:40:42    ----     Invio SUPEBCRMJ6QYBQ65UZ9Rfd00:0000:0000:0000:7ed1:c3ff:fe76:362a5000002 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:40:44    ----     Ricevuto LOGI da fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:40:44    ----     Inviato ALGIUQRQGPWRCIIZP4TQ a fd00:0000:0000:0000:7ed1:c3ff:fe76:362a : 50000
+06/05/2014 15:41:24    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000 TTL:49
+06/05/2014 15:41:24    ----     Invio ASUP6T2R1LFHG8ZW6O0Vfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:42:16    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:42:19    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:42:19    ----     Threads partiti
+06/05/2014 15:42:29    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:42:29    ----     Invio ASUP8GWGXNOXFDRF8ZWYfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:42:29    ----     Invio SUPE8GWGXNOXFDRF8ZWYfd00:0000:0000:0000:7ed1:c3ff:fe76:362a5000002 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:42:30    ----     Ricevuto LOGI da fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:42:30    ----     Inviato ALGI38FV8UYU36BF86E9 a fd00:0000:0000:0000:7ed1:c3ff:fe76:362a : 50000
+06/05/2014 15:44:24    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:44:28    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:44:28    ----     Threads partiti
+06/05/2014 15:44:30    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:44:30    ----     Invio ASUPSRKDW0L3MUOA1QX8fd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:44:30    ----     Invio SUPESRKDW0L3MUOA1QX8fd00:0000:0000:0000:7ed1:c3ff:fe76:362a5000002 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:44:31    ----     Ricevuto LOGI da fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:44:31    ----     Inviato ALGIY1LLVAD731ILQUY7 a fd00:0000:0000:0000:7ed1:c3ff:fe76:362a : 50000
+06/05/2014 15:45:14    ----     Arrivato FINDY1LLVAD731ILQUY7iodal peer: fd00:0000:0000:0000:7ed1:c3ff:fe76:362a
+06/05/2014 15:45:36    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000 TTL:31
+06/05/2014 15:45:36    ----     Invio ASUPOFY70T5G6LEH9IUUfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:45:42    ----     Ricevuto LOGI da fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:45:42    ----     Inviato ALGIRJ4F7U9CE8N14MRX a fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a : 50000
+06/05/2014 15:46:25    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:46:25    ----     Invio ASUP8QJS0SDLWABCIBWYfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:46:25    ----     Invio SUPE8QJS0SDLWABCIBWYfd00:0000:0000:0000:7ed1:c3ff:fe76:362a5000002 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:46:26    ----     Ricevuto LOGI da fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:46:26    ----     Peer giÃ  loggato
+06/05/2014 15:46:26    ----     Inviato ALGI0000000000000000 a fd00:0000:0000:0000:7ed1:c3ff:fe76:362a : 50000
+06/05/2014 15:46:56    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:46:59    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:46:59    ----     Threads partiti
+06/05/2014 15:47:09    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:47:09    ----     Invio ASUP5W8249RWOHIOWWEPfd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:47:09    ----     Invio SUPE5W8249RWOHIOWWEPfd00:0000:0000:0000:7ed1:c3ff:fe76:362a5000002 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:47:11    ----     Ricevuto LOGI da fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:47:11    ----     Inviato ALGIX2GBHH9BZDJQ2URM a fd00:0000:0000:0000:7ed1:c3ff:fe76:362a : 50000
+06/05/2014 15:47:19    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000 TTL:31
+06/05/2014 15:47:19    ----     Invio ASUPN9UAODN5WV96PSI9fd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:47:24    ----     Ricevuto LOGI da fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 15:47:24    ----     Inviato ALGIQT7TQ2E0HNAKT6SR a fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a : 50000
+06/05/2014 15:47:38    ----     Arrivato FINDX2GBHH9BZDJQ2URMiodal peer: fd00:0000:0000:0000:7ed1:c3ff:fe76:362a
+06/05/2014 15:47:58    ----     Inviato AFIN001ÝÅ§=œælð¡TàÔJîkio.jpeg                                                                                             001fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a50000
+06/05/2014 15:49:56    ----     NUOVA SESSIONE super PEER
+06/05/2014 15:50:10    ----     Primo vicino: fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
+06/05/2014 15:50:10    ----     Threads partiti
+06/05/2014 15:50:35    ----     Ricevuto SUPE da fd00::7ed1:c3ff:fe76:362a : fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000 TTL:03
+06/05/2014 15:50:35    ----     Invio ASUP00CVZR2FITQQSS20fd00:0000:0000:0000:22c9:d0ff:fe47:70a350000 Vicino fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:50000
