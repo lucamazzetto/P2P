@@ -10,7 +10,7 @@ import socket,stat,sys,hashlib,os,threading,thread,time,re
 from random import * 
 import random
 import string 
-mioIP="fd00:0000:0000:0000:7ed1:c3ff:fe76:362a"
+mioIP="fd00:0000:0000:0000:22c9:d0ff:fe47:70a3"
 PortaQuery="03000"
 #PortaQuery="3000"
 gestioneRisposte={} #oggetto della classe threadRisposte
@@ -623,8 +623,8 @@ class threadRisposte(threading.Thread):
 			Portaparametro=controllaArgomentoStringa(5,Portaparametro)
 			TTL=leggi(self.socketACK,2)
 			TTL=controllaDimensione(TTL)
-			Ricerca=leggi(self.socketACK,20)
-			#Ricerca=elimina_asterischi(Ricerca1)
+			Ricerca1=leggi(self.socketACK,20)
+			Ricerca=elimina_asterischi(Ricerca1)
 			Ricerca=controllaArgomentoStringa(20,Ricerca)	
 			Ricerca=Ricerca.strip()
 			pacchettoR=identificativo+PKTID+IPparametro+Portaparametro+TTL+Ricerca

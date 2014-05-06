@@ -391,3 +391,83 @@
 06/05/2014 17:10:43    ----     Super Peer aggiunto: fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000
 06/05/2014 17:10:45    ----     Provo a loggarmi ad fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000
 06/05/2014 17:10:45    ----     Loggato a fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000
+06/05/2014 17:14:33    ----     NUOVA SESSIONE super PEER
+06/05/2014 17:14:42    ----     NUOVA SESSIONE super PEER
+06/05/2014 17:14:47    ----     Primo vicino: fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:14:47    ----     Threads partiti
+06/05/2014 17:15:10    ----     NUOVA SESSIONE super PEER
+06/05/2014 17:15:14    ----     Primo vicino: fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:15:14    ----     Threads partiti
+06/05/2014 17:15:27    ----     Ricevuto SUPE da fd00::8977:2558:6aa7:ddd7 : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:03000 TTL:05
+06/05/2014 17:15:27    ----     Invio ASUP491A7AU11DPG7REDfd00:0000:0000:0000:7ed1:c3ff:fe76:362a03000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:03000
+06/05/2014 17:15:27    ----     Invio SUPE491A7AU11DPG7REDfd00:0000:0000:0000:26fd:52ff:fe7a:6c5a0300004 Vicino fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:17:51    ----     NUOVA SESSIONE super PEER
+06/05/2014 17:17:54    ----     Primo vicino: fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:17:54    ----     Threads partiti
+06/05/2014 17:18:19    ----     Ricevuto SUPE da fd00::8977:2558:6aa7:ddd7 : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:03000 TTL:05
+06/05/2014 17:18:19    ----     Invio ASUPDWLVZ7K6DAX25HSOfd00:0000:0000:0000:7ed1:c3ff:fe76:362a03000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:03000
+06/05/2014 17:18:19    ----     Invio SUPEDWLVZ7K6DAX25HSOfd00:0000:0000:0000:26fd:52ff:fe7a:6c5a0300004 Vicino fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:20:57    ----     NUOVA SESSIONE super PEER
+06/05/2014 17:21:05    ----     Primo vicino: fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:21:05    ----     Threads partiti
+06/05/2014 17:22:38    ----     NUOVA SESSIONE super PEER
+06/05/2014 17:22:41    ----     Primo vicino: fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:22:42    ----     Threads partiti
+06/05/2014 17:24:41    ----     NUOVA SESSIONE super PEER
+06/05/2014 17:24:44    ----     Primo vicino: fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:24:44    ----     Threads partiti
+06/05/2014 17:27:52    ----     NUOVA SESSIONE super PEER
+06/05/2014 17:28:00    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 17:28:00    ----     Threads partiti
+06/05/2014 17:28:41    ----     NUOVA SESSIONE super PEER
+06/05/2014 17:28:45    ----     Primo vicino: fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:50000
+06/05/2014 17:28:45    ----     Threads partiti
+06/05/2014 17:31:31    ----     NUOVA SESSIONE super PEER
+06/05/2014 17:31:46    ----     Primo vicino: fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:31:46    ----     Threads partiti
+06/05/2014 17:31:51    ----     Ricevuto SUPE da fd00::8977:2558:6aa7:ddd7 : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:03000 TTL:05
+06/05/2014 17:31:51    ----     Invio ASUPPJSLP36V97OQG1XQfd00:0000:0000:0000:22c9:d0ff:fe47:70a303000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:03000
+06/05/2014 17:31:51    ----     Invio SUPEPJSLP36V97OQG1XQfd00:0000:0000:0000:26fd:52ff:fe7a:6c5a0300004 Vicino fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:31:58    ----     Ricevuto LOGI da fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:03000
+06/05/2014 17:31:58    ----     Inviato ALGIRBOPPPP8AL712740 a fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a : 03000
+06/05/2014 17:33:02    ----     Arrivato FINDRBOPPPP8AL712740trustdal peer: fd00:0000:0000:0000:8977:2558:6aa7:ddd7
+06/05/2014 17:33:34    ----     NUOVA SESSIONE super PEER
+06/05/2014 17:33:45    ----     Primo vicino: fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:33:45    ----     Threads partiti
+06/05/2014 17:34:01    ----     Ricevuto SUPE da fd00::8977:2558:6aa7:ddd7 : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:03000 TTL:05
+06/05/2014 17:34:01    ----     Invio ASUPCIW3V1MJNRMW2LT9fd00:0000:0000:0000:22c9:d0ff:fe47:70a303000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:03000
+06/05/2014 17:34:01    ----     Invio SUPECIW3V1MJNRMW2LT9fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a0300004 Vicino fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:34:01    ----     !!Pacchetto Scartato!!!! SUPECIW3V1MJNRMW2LT9fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a03000 ricevuto del peerfd00:0000:0000:0000:e89b:f565:afbb:ee30
+06/05/2014 17:34:03    ----     Ricevuto LOGI da fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:03000
+06/05/2014 17:34:03    ----     Inviato ALGIIOP6OC0EYIWC6Q42 a fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a : 03000
+06/05/2014 17:34:12    ----     Ricevuto SUPE da fd00::e89b:f565:afbb:ee30 : fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000 TTL:03
+06/05/2014 17:34:12    ----     Invio ASUPMHQI5CAXMHFLDV6Qfd00:0000:0000:0000:22c9:d0ff:fe47:70a303000 Vicino fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:34:27    ----     Arrivato FINDIOP6OC0EYIWC6Q42trustdal peer: fd00:0000:0000:0000:8977:2558:6aa7:ddd7
+06/05/2014 17:34:28    ----     Invio QUERLKCSL6XPMR0F7LW7fd00:0000:0000:0000:22c9:d0ff:fe47:70a35173803trust                Vicino fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:34:28    ----     Invio QUERLKCSL6XPMR0F7LW7fd00:0000:0000:0000:22c9:d0ff:fe47:70a35173803trust                Vicino fd00:0000:0000:0000:58b2:f9d6:1f74:897b:08000
+06/05/2014 17:34:48    ----     Inviato AFIN001uIðØ…(â¸h»‘sh¦trust_me.jpg                                                                                        002fd00:0000:0000:0000:0224:d6ff:fe61:420c03000fd00:0000:0000:0000:0224:d6ff:fe61:420c03000
+06/05/2014 17:35:26    ----     Ricevuto SUPE da fd00::e89b:f565:afbb:ee30 : fd00:0000:0000:0000:58b2:f9d6:1f74:897b:08000 TTL:03
+06/05/2014 17:35:26    ----     Invio ASUPDJZDGZO0E2LC8AEXfd00:0000:0000:0000:22c9:d0ff:fe47:70a303000 Vicino fd00:0000:0000:0000:58b2:f9d6:1f74:897b:08000
+06/05/2014 17:35:26    ----     Invio SUPEDJZDGZO0E2LC8AEXfd00:0000:0000:0000:58b2:f9d6:1f74:897b0800002 Vicino fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:36:45    ----     Pacchetto QUER ricevuto dal peer fd00::e89b:f565:afbb:ee30 : 08CG3CFL0X2SZTC8 fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000 io****************** 05
+06/05/2014 17:36:45    ----     Invio QUER08CG3CFL0X2SZTC8fd00:0000:0000:0000:a617:31ff:fe0f:822e0300004io****************** Vicino fd00:0000:0000:0000:58b2:f9d6:1f74:897b:08000
+06/05/2014 17:37:44    ----     NUOVA SESSIONE super PEER
+06/05/2014 17:37:47    ----     Primo vicino: fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:37:47    ----     Threads partiti
+06/05/2014 17:37:56    ----     Ricevuto SUPE da fd00::8977:2558:6aa7:ddd7 : fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:03000 TTL:05
+06/05/2014 17:37:56    ----     Invio ASUPB9ZH653BH1DFYZPGfd00:0000:0000:0000:22c9:d0ff:fe47:70a303000 Vicino fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:03000
+06/05/2014 17:37:56    ----     Invio SUPEB9ZH653BH1DFYZPGfd00:0000:0000:0000:26fd:52ff:fe7a:6c5a0300004 Vicino fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:37:57    ----     !!Pacchetto Scartato!!!! SUPEB9ZH653BH1DFYZPGfd00:0000:0000:0000:26fd:52ff:fe7a:6c5a03000 ricevuto del peerfd00:0000:0000:0000:e89b:f565:afbb:ee30
+06/05/2014 17:37:59    ----     Ricevuto LOGI da fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a:03000
+06/05/2014 17:37:59    ----     Inviato ALGIKH0TYL6Z8OB8MSBZ a fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a : 03000
+06/05/2014 17:38:23    ----     Pacchetto QUER ricevuto dal peer fd00::e89b:f565:afbb:ee30 : PZNB3U9E0B5JR6QA fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000 io 05
+06/05/2014 17:38:23    ----     Invio QUERPZNB3U9E0B5JR6QAfd00:0000:0000:0000:a617:31ff:fe0f:822e0300004io                   Vicino fd00:0000:0000:0000:707d:8397:3b94:b5e0:03332
+06/05/2014 17:38:23    ----     Invio AQUEPZNB3U9E0B5JR6QAfd00:0000:0000:0000:22c9:d0ff:fe47:70a303000ÝÅ§=œælð¡TàÔJîkio.jpeg                                                                                              Vicino fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:40:07    ----     Pacchetto QUER ricevuto dal peer fd00::e89b:f565:afbb:ee30 : 5N3I0STNWELBYGCS fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000 io 05
+06/05/2014 17:40:07    ----     Invio QUER5N3I0STNWELBYGCSfd00:0000:0000:0000:a617:31ff:fe0f:822e0300004io                   Vicino fd00:0000:0000:0000:707d:8397:3b94:b5e0:03332
+06/05/2014 17:40:07    ----     Invio AQUE5N3I0STNWELBYGCSfd00:0000:0000:0000:22c9:d0ff:fe47:70a303000ÝÅ§=œælð¡TàÔJîkio.jpeg                                                                                              Vicino fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:40:07    ----     Invio AQUE5N3I0STNWELBYGCSfd00:0000:0000:0000:26fd:52ff:fe7a:6c5a03000ÝÅ§=œælð¡TàÔJîkio.jpeg                                                                                              Vicino fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:40:08    ----     Pacchetto QUER ricevuto dal peer fd00::e89b:f565:afbb:ee30 : LZ927IQIX6ZK9M00 fd00:0000:0000:0000:a617:31ff:fe0f:822e 03000 io 05
+06/05/2014 17:40:08    ----     Invio QUERLZ927IQIX6ZK9M00fd00:0000:0000:0000:a617:31ff:fe0f:822e0300004io                   Vicino fd00:0000:0000:0000:707d:8397:3b94:b5e0:03332
+06/05/2014 17:40:08    ----     Invio AQUELZ927IQIX6ZK9M00fd00:0000:0000:0000:22c9:d0ff:fe47:70a303000ÝÅ§=œælð¡TàÔJîkio.jpeg                                                                                              Vicino fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
+06/05/2014 17:40:08    ----     Invio AQUELZ927IQIX6ZK9M00fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a03000ÝÅ§=œælð¡TàÔJîkio.jpeg                                                                                              Vicino fd00:0000:0000:0000:a617:31ff:fe0f:822e:03000
