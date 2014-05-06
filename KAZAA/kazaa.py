@@ -7,8 +7,8 @@ from random import *
 import random
 import string 
 mioIP="fd00:0000:0000:0000:22c9:d0ff:fe47:70a3"
-PortaQuery="50000"
-#PortaQuery="50000"
+PortaQuery="3000"
+#PortaQuery="3000"
 gestioneRisposte={} #oggetto della classe threadRisposte
 gestioneRisposte20s={}
 listaVicini={} #lista degli ip e porte dei vicini
@@ -619,8 +619,8 @@ class threadRisposte(threading.Thread):
 			Portaparametro=controllaArgomentoStringa(5,Portaparametro)
 			TTL=leggi(self.socketACK,2)
 			TTL=controllaDimensione(TTL)
-			Ricerca1=leggi(self.socketACK,20)
-			Ricerca=elimina_asterischi(Ricerca1)
+			Ricerca=leggi(self.socketACK,20)
+			#Ricerca=elimina_asterischi(Ricerca1)
 			Ricerca=controllaArgomentoStringa(20,Ricerca)	
 			Ricerca=Ricerca.strip()
 			pacchettoR=identificativo+PKTID+IPparametro+Portaparametro+TTL+Ricerca
@@ -1106,8 +1106,8 @@ if scelta=="1": #SUPER PEER
 	superPeer=1
 	print "Salve super peer...\n"
 	scriviLog("NUOVA SESSIONE super PEER")
-	IP=raw_input("Inserisci IP vicino 1: ") 
-	Porta=raw_input("Inserisci Porta vicino 1: ") 
+	IP=raw_input("Inserisci IP Super peer vicino: ") 
+	Porta=raw_input("Inserisci Porta Super peer vicino: ") 
 	IP=creaIP(IP) 
 	Porta=controllaArgomentoNumero(5,Porta)
 	listaVicini[0]=Vicini(IP,Porta)
@@ -1280,8 +1280,8 @@ if scelta=="2": #PEER
 	superPeer=0
 	print "Salve peer....\n"
 	scriviLog("NUOVA SESSIONE PEER")
-	IP=raw_input("Inserisci IP vicino 1: ") 
-	Porta=raw_input("Inserisci Porta vicino 1: ") 
+	IP=raw_input("Inserisci IP del super peer ") 
+	Porta=raw_input("Inserisci Porta del super peer  ") 
 	IP=creaIP(IP) 
 	Porta=controllaArgomentoNumero(5,Porta)
 	listaVicini[0]=Vicini(IP,Porta)
@@ -1298,7 +1298,7 @@ if scelta=="2": #PEER
 	scriviLog("Thread ascolto partito")
 	
 	
-	if raw_input("Vuoi cercare super peer?  [y/n] ").lower() == "y":
+	if raw_input("Confermi il super peer3000?  [y/n] ").lower() == "y":
 		TTL=raw_input("Inserisci Time to live (TTL) per i vicini: ")
 		TTL=controllaDimensione(TTL)
 		PKTID=generaPKTID(16)
@@ -1335,7 +1335,7 @@ if scelta=="2": #PEER
 		PortaP2P=listaSuperPeer[0].PORTA
 		scriviLog("Provo a loggarmi ad "+IPP2P+" "+PortaP2P)
 		#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-		peer_socket=creazioneSocket(IPP2P,"50000")  ###########################################
+		peer_socket=creazioneSocket(IPP2P,"3000")  ###########################################
 		peer_socket= logi(peer_socket,mioIP,PortaQuery)	
 		#risposta al login
 		risposta=leggi(peer_socket,20) 
@@ -1379,7 +1379,7 @@ if scelta=="2": #PEER
 			
 			if scelta=="1": #aggiunta file
 				#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-				peer_socket=creazioneSocket(IPP2P,"5000050000") ##################################
+				peer_socket=creazioneSocket(IPP2P,"3000") ##################################
 				print "aggiunta file in corso....."
 				percorsoFile="./immagine/"				
 				Filename=raw_input("Inserisci nome del file da aggiungere: ")				
@@ -1395,7 +1395,7 @@ if scelta=="2": #PEER
 		#...........................................................................................................		
 			if scelta=="2" :#rimozione file
 				#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-				peer_socket=creazioneSocket(IPP2P,"50000")  ########################################
+				peer_socket=creazioneSocket(IPP2P,"3000")  ########################################
 				print "rimozione file in corso......."
 				percorsoFile="./immagine/"
 				Filename=raw_input("Inserisci nome del file.estensione da eliminare: ")
@@ -1409,7 +1409,7 @@ if scelta=="2": #PEER
 			if scelta=="3": #ricerca file
 				indice=0
 				#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-				peer_socket=creazioneSocket(IPP2P,"50000")  #############################################
+				peer_socket=creazioneSocket(IPP2P,"3000")  #############################################
  				print "ricerca file in corso....."
 				Ricerca=raw_input("Inserisci stringa di ricerca del file: ")
 				find(peer_socket,SessionID,Ricerca)
@@ -1498,7 +1498,7 @@ if scelta=="2": #PEER
 			#..................................................................................
 			if scelta== "5": #Logout
 				#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-				peer_socket=creazioneSocket(IPP2P,"50000")   ##################################################
+				peer_socket=creazioneSocket(IPP2P,"3000")   ##################################################
 				print "logout....."
 				logo(peer_socket,SessionID)
 				scriviLog("Inviato LOGO"+SessionID)
