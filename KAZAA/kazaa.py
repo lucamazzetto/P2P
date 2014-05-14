@@ -436,7 +436,7 @@ class ThreadAscolto(threading.Thread):
 			return False			
 
 		# Share it with the class
-		self.socketACK.settimeout(100)
+		self.socketACK.settimeout(1000)
 		while self.acceso:
 			
 			try:				
@@ -448,13 +448,13 @@ class ThreadAscolto(threading.Thread):
 			except socket.timeout:
 				print "Tempo scaduto.....cancellazione pacchetti in corso.."	
 				tempo=time.time()
-				cancellaPacchettiScaduti(listaPKTID,tempo,500) #lista pktid:pktid dei quer che ritrasmetto
-				cancellaPacchettiScaduti(listaPKTIDsupe,tempo,500)#lista pktidsupe:pktid dei supe che ritrasmetto
+				cancellaPacchettiScaduti(listaPKTID,tempo,5000) #lista pktid:pktid dei quer che ritrasmetto
+				cancellaPacchettiScaduti(listaPKTIDsupe,tempo,5000)#lista pktidsupe:pktid dei supe che ritrasmetto
 				#cancellaPacchettiScaduti(PKTIDmio,tempo,20)
 				print				
 				print 
 				#cancellaPacchettiScaduti(PKTIDmio,tempo)
-				self.socketACK.settimeout(100)
+				self.socketACK.settimeout(1000)
 				#client_socket.send("tempo scaduto")		
 	def log(self, msg):
 		print(msg)
