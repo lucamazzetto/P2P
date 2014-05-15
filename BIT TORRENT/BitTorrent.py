@@ -309,7 +309,8 @@ class ThreadAscolto(threading.Thread):
 	acceso=1
 	gestioneRisposte={}
 	def __init__(self,Porta):
-		threading.Thread.__init__(self)		
+		threading.Thread.__init__(self)
+		self.socketACK.setblocking(1)		
 		self.porta=Porta		
 	def run(self):
 		# Create the socket
@@ -851,17 +852,21 @@ class MiaApp:
 		ipTracker=self.entry1.get()
 		portaTracker=self.entry2.get()
 		if (ipTracker != '') and (portaTracker != '') :
-			self.info1.insert(INSERT,"Inseriti"+ipTracker+":"+portaTracker+"\n" )
+			self.info1.insert(INSERT,"Inseriti "+ipTracker+":"+portaTracker+"\n" )
 			self.entry1.configure(state='disabled')
 			self.entry2.configure(state='disabled')
 			self.bottone1.configure(state='disabled')
 			self.bottone2.configure(state=NORMAL)
 			ipTracker=creaIP(ipTracker)
+			print ipTracker
 			portaTracker=controllaArgomentoNumero(5,portaTracker)
+			print portaTracker
 			#invio LOGI
 			try:
 				s=creazioneSocket(ipTracker,portaTracker)
+				scriviLog(self,"OK connesso")
 				pacchetto= logi(mioIP,miaPorta)
+				scriviLog(self,"OK connesso")
 				s.send(pacchetto)
 				scriviLog(self,"Inviato LOGI:  "+pacchetto)
 			except:
