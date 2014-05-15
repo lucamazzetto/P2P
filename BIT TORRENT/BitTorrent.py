@@ -2,6 +2,10 @@
 # -*- coding: UTF-8 -*-
 #progetto3
 
+#io  			fd00:0000:0000:0000:7ed1:c3ff:fe76:362a
+#guerra 		fd00:0000:0000:0000:22c9:d0ff:fe47:70a3
+#mazzetto		fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a
+
 import socket,stat,sys,hashlib,os,threading,thread,time,re,shutil
 from threading import *
 from operator import itemgetter, attrgetter
@@ -12,7 +16,7 @@ import string
 from math import *
 from time import sleep
 import tkFileDialog
-mioIP="192.168.001.101"
+mioIP="fd00:0000:0000:0000:7ed1:c3ff:fe76:362a"
 miaPorta="50000"
 ipTracker=""
 portaTracker=""
@@ -214,7 +218,7 @@ def scriviLog(self,Str):
 
 def creazioneSocket(IP,Porta):
 	#apertura socket	
-	peer_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+	peer_socket = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
 	peer_socket.connect((IP,int(Porta)))
 	return peer_socket	
 	
@@ -299,7 +303,7 @@ class ThreadAscolto(threading.Thread):
 	def run(self):
 		# Create the socket
 		try:
-			self.socketACK=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			self.socketACK=socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
 			self.socketACK.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 			self.socketACK.bind(("", int(self.porta)))
 		except:
