@@ -175,12 +175,23 @@ def leggi(s,dim):
 	return dato
 	
 def creaIP(ip):
-	l=ip.split(".")
+	l=ip.split(":")
+	diff=8-len(l)
+	n="0000:0000:0000:0000:0000:0000:0000:0000"
+	v=n.split(":")
 	i=0
+	k=0
 	while i<len(l):
-		l[i]="0"*(3-len(l[i]))+l[i]
-		i=i+1
-	return str(l[0])+"."+str(l[1])+"."+str(l[2])+"."+str(l[3])
+		
+		if l[i]!='':
+			v[k]=l[i]
+			i=i+1
+			k=k+1
+		else:
+			i=i+1
+			k=k+diff+1
+	#print v		
+	return str(v[0])+":"+str(v[1])+":"+str(v[2])+":"+str(v[3])+":"+str(v[4])+":"+str(v[5])+":"+str(v[6])+":"+str(v[7])
 	
 
 
