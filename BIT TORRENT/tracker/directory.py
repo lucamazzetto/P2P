@@ -125,16 +125,17 @@ def addr(clientSocket):
         if (filePresente == 0):
             print "-----AGGIUNGO FILE-----"
 			listPart = []
-			for i in math.floor(lenFile/lenPart)
+			for i in int((lenFile/lenPart)/8)
 				listPart.append("11111111")
 			stringa = "00000000"
-			for i in range(0,(lenFile/lenpart)-math.floor(lenFile/LenPart)-1)
-				stringa[i]=1
-			listPart.append(stringa)
+			if ()(lenFile/lenPart % 8)>0):
+				for i in range(0,((lenFile/lenPart) % 8)-1)
+					stringa[i]="1"
+				listPart.append(stringa)
             newFile = structFile.structFile(nomef, randomId, lenFile, lenPart, listPart, psessionId)
             listaFile.append(newFile)
             #nFile = 1
-		nPart = math.floor(lenFile/lenPart)
+		nPart = math.ceil(lenFile/lenPart)
         clientSocket.send("AADR"+nPart)
     #clientSocket.send(nfile)
     elif (sessionLogin == 0):
@@ -237,33 +238,54 @@ def fchu(clientSocket):
         indici = []
         for i in range(len(listaFile)):
 
-            if listaFile[i].randomId.count(rndId) > 0:
-                indici.append(i)
-			
-	
-	
+            if (listaFile[i].randomId == rndId) :
+                for h in listaFile[i].idsess:
+					for j in len(listaSessioni):
+						if (h == listaSessioni[j].sid):
+							stringchu=stringchu+listaSessioni[j].pip+listaSessioni[j].pport
+							for l in math.ceil(listaFile[i].lenFile/listaFile[i].lenPart):
+								stringchu = stringchu+listaFile[i].partList[l]
+				hitpeer=len(listaFile.idsess)
+    elif(sessionLogin == 0):
+        print "-----SESSIONE NON ESISTENTE-----"
+	stringar="AFCH"+hitpeer+stringchu
+    while True:
+        m = stringar[:1024]
+        clientSocket.send(m)
+        stringa2 = stringar[1024:]
+        if len(m) <1024:
+            break  
+    stringar=""
 
-def dwnl(clientSocket):
-    print "DREG"
+def rpad(clientSocket):
+    print "RPAD"
     psessionId = clientSocket.recv(16)
-    fileMd5 = clientSocket.recv(16)
+    rndId = clientSocket.recv(16)
+	partNum = clientSocket.recv(8)
     #pIp = clientSocket.recv(15)
     #pPort = clientSocket.recv(5)
     sessionLogin = controllo_sessione(psessionId)
     if (sessionLogin == 1):
-        nDL = 0
+		tmp = 0
+		trovato = false
         for files in listaFile:
-            if files.md5 == fileMd5:
-                files.total = files.total + 1
-                nDL = files.total
-                print "NUMERO DOWNLOAD: ", nDL
-                break
-        if nDL == 0:
-            print "-----MD5 NON PRESENTE-----"
-        else:
-            #clientSocket.send("ARRE")
-            numDownload = "%05d" % nDL
-            clientSocket.send("ADRE"+numDownload)
+            if files.randomId == rndId:
+                for peer in files.idsess:
+					if (psessionId == peer):
+						trovato = true
+						index = tmp
+					tmp = tmp+1
+				if (trovato == false):
+					files.idsess.append(psessionId)
+					index = tmp
+				files.partList[index][math.floor(files.lenFile/files.lenPart)][(files.lenFile % files.lenPart)-1]="1"
+				tot=0
+				for j in math.ceil(files.lenFile/files.lenPart):
+					for i in range (0,7)
+						if (files.partList[index][j][i]=="1"):
+							tot = tot+1
+        numDownload = "%08d" % tot
+        clientSocket.send("APAD"+numDownload)
 
     elif (sessionLogin == 0):
         print "-----SESSIONE NON ESISTENTE-----"
@@ -276,7 +298,7 @@ options = { "LOGI" : logi,
 			"FCHU" : fchu,
             "DELF" : delf,
             "LOOK" : look,
-            "DREG" : dwnl}
+            "RPAD" : rpad}
 
 
 def gestore_connessioni(clientSocket, ipp, portap):
