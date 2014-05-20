@@ -39,10 +39,7 @@ def logi(clientSocket):
     elif errSessione == 1:
         print "-----SESSIONE GIA ESISTENTE-----"
         sessionId = "%016d" % 0
-    #clientSocket.send("ALOG"+sessionId)
     clientSocket.send("ALGI"+sessionId)
-#clientSocket.send(sessionId)
-
 
 
 def logo(clientSocket):
@@ -93,41 +90,44 @@ def logo(clientSocket):
 
 
 def addf(clientSocket):
-    print "ADDF"
+    print "ADDR"
     psessionId = clientSocket.recv(16)
-    md5 = clientSocket.recv(16)
-    nomef = clientSocket.recv(100)
+    randomId = clientSocket.recv(16) #md5
+    lenfile = clientSocket.recv(10)
+	lenpart = clientSocket.recv(6)
+	nomef = clientSocket.recv(100)
     #print psessionId, " ",md5,"",nomef
     sessionLogin = controllo_sessione(psessionId)
     if (sessionLogin == 1):
         filePresente = 0
         nFile = 0
         for files in listaFile:
-            if (files.md5 == md5):
-                print "----AGGIORNAMENTO NOME FILE-----"
+            if (files.randomId == randomId): #md5
+             #   print "----AGGIORNAMENTO NOME FILE-----"
                 filePresente = 1
-                files.nome = nomef
-                trovato = 0
-                for i in range(len(files.idsess)):
-                    if (files.idsess[i] == psessionId):
-                        trovato = 1
-                        break
-                if (trovato == 0):
-                    files.idsess.append(psessionId)
-                    nFile = len(files.idsess)
-                    break
-                else:
-                    nFile = len(files.idsess)
-                    break
+				print "Ehi.... File già presente, serve nuovo..."
+               # files.nome = nomef
+                #trovato = 0
+                #for i in range(len(files.idsess)):
+                #    if (files.idsess[i] == psessionId):
+                #        trovato = 1
+                #        break
+                #if (trovato == 0):
+                #    files.idsess.append(psessionId)
+                #    nFile = len(files.idsess)
+                #    break
+                #else:
+                #    nFile = len(files.idsess)
+                #    break
 
 
         if (filePresente == 0):
             print "-----AGGIUNGO FILE-----"
-            newFile = structFile.structFile(nomef, md5, psessionId)
+            newFile = structFile.structFile(nomef, randomId, lenFile, lenPart, psessionId)
             listaFile.append(newFile)
-            nFile = 1
-        nfile = "%03d" % nFile
-        clientSocket.send("AADD"+nfile)
+            #nFile = 1
+        nPart = lenFile/lenPart
+        clientSocket.send("AADR"+nPart)
     #clientSocket.send(nfile)
     elif (sessionLogin == 0):
         print "-----SESSIONE NON ESISTENTE-----"
@@ -164,9 +164,9 @@ def delf(clientSocket):
 
 
 
-def fndf(clientSocket):
+def look(clientSocket):
     stringa = ""
-    print "FIND"
+    print "LOOK"
     psessionId = clientSocket.recv(16)
     searchString = clientSocket.recv(20)
     ss1 = searchString.rstrip()
@@ -182,32 +182,32 @@ def fndf(clientSocket):
             if listaFile[i].nome.lower().count(ss) > 0:
                 indici.append(i)
         #clientSocket.send("AFIN")
-        numMD5 = "%03d" % len(indici)
-    print "numMD5 ",numMD5
+        numRandId = "%03d" % len(indici) #numMd5
+    print "numRandId ",numRandId
     #clientSocket.send("AFIN"+numMD5)
     if (len(indici) != 0):
         for i in indici:
             #clientSocket.send(listaFile[i].md5+listaFile[i].nome)
             #clientSocket.send(listaFile[i].nome)
-            numCopie = "%03d" % len(listaFile[i].idsess)
+            #numCopie = "%03d" % len(listaFile[i].idsess)
             #print "numCopie ",numCopie
             #clientSocket.send(listaFile[i].md5+listaFile[i].nome+numCopie)
-            stringa = stringa+(listaFile[i].md5+listaFile[i].nome+numCopie)
+            stringa = stringa+(listaFile[i].randomId+listaFile[i].nome+listaFile[i].lenFile+listaFile[i].lenPart)
             #print listaFile[i].md5
             #print listaFile[i].md5+listaFile[i].nome+numCopie
-            print "numCopie ",numCopie
-            for j in range(len(listaFile[i].idsess)):
+            #print "numCopie ",numCopie
+            #for j in range(len(listaFile[i].idsess)):
                 #per ogni id lo cerco in listaSessioni
-                for z in range(len(listaSessioni)):
+             #   for z in range(len(listaSessioni)):
                     #se lo trovo invio e passo al nuovo id
-                    if listaSessioni[z].sid == listaFile[i].idsess[j]:
-                        print "Invio ",listaSessioni[z].pip," e porta", listaSessioni[z].pport
+              #      if listaSessioni[z].sid == listaFile[i].idsess[j]:
+               #         print "Invio ",listaSessioni[z].pip," e porta", listaSessioni[z].pport
                         #clientSocket.send(listaSessioni[z].pip)
-                        stringa = stringa+(listaSessioni[z].pip+listaSessioni[z].pport)
-                        break
+                #        stringa = stringa+(listaSessioni[z].pip+listaSessioni[z].pport)
+                 #       break
     elif(sessionLogin == 0):
         print "-----SESSIONE NON ESISTENTE-----"
-    stringa2="AFIN"+numMD5+stringa
+    stringa2="ALOO"+numRandId+stringa
     #print stringa2   
     #clientSocket.send("AFIN"+numMD5+stringa)
     #stringa=""
@@ -220,7 +220,11 @@ def fndf(clientSocket):
             break  
     stringa=""          
 
-
+def fchu(clientSocket):
+	print "FCHU"
+	psessionId = clientSocket.recv(16)
+	rndId = clientSocket.recv(16)
+	
 
 def dwnl(clientSocket):
     print "DREG"
@@ -251,9 +255,10 @@ def dwnl(clientSocket):
 
 options = { "LOGI" : logi,
             "LOGO" : logo,
-            "ADDF" : addf,
+            "ADDR" : addr,
+			"FCHU" : fchu,
             "DELF" : delf,
-            "FIND" : fndf,
+            "LOOK" : look,
             "DREG" : dwnl}
 
 

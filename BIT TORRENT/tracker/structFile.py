@@ -1,8 +1,10 @@
 class structFile:
-    def __init__(self, nome, md5, idsess):
+    def __init__(self, nome, randomId, lenFile, lenPart, idsess):
 		self.idsess=[]
 		self.nome = nome
-		self.md5 = md5
+		self.randomId = randomId
+		self.lenFile = lenFile
+		self.lenPart = lenPart
 		self.idsess.append(idsess)
 		self.total = 0
 		print "		AGGIUNTO ---> ", self.nome
