@@ -8,6 +8,7 @@ import structFile
 import string
 import thread as thrd
 import sys
+import math
 import re
 
 
@@ -89,7 +90,7 @@ def logo(clientSocket):
 
 
 
-def addf(clientSocket):
+def addr(clientSocket):
     print "ADDR"
     psessionId = clientSocket.recv(16)
     randomId = clientSocket.recv(16) #md5
@@ -123,10 +124,17 @@ def addf(clientSocket):
 
         if (filePresente == 0):
             print "-----AGGIUNGO FILE-----"
-            newFile = structFile.structFile(nomef, randomId, lenFile, lenPart, psessionId)
+			listPart = []
+			for i in math.floor(lenFile/lenPart)
+				listPart.append("11111111")
+			stringa = "00000000"
+			for i in range(0,(lenFile/lenpart)-math.floor(lenFile/LenPart)-1)
+				stringa[i]=1
+			listPart.append(stringa)
+            newFile = structFile.structFile(nomef, randomId, lenFile, lenPart, listPart, psessionId)
             listaFile.append(newFile)
             #nFile = 1
-        nPart = lenFile/lenPart
+		nPart = math.floor(lenFile/lenPart)
         clientSocket.send("AADR"+nPart)
     #clientSocket.send(nfile)
     elif (sessionLogin == 0):
@@ -224,6 +232,15 @@ def fchu(clientSocket):
 	print "FCHU"
 	psessionId = clientSocket.recv(16)
 	rndId = clientSocket.recv(16)
+    sessionLogin = controllo_sessione(psessionId)
+    if (sessionLogin == 1):
+        indici = []
+        for i in range(len(listaFile)):
+
+            if listaFile[i].randomId.count(rndId) > 0:
+                indici.append(i)
+			
+	
 	
 
 def dwnl(clientSocket):
