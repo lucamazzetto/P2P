@@ -94,9 +94,11 @@ def addr(clientSocket):
     print "ADDR"
     psessionId = clientSocket.recv(16)
     randomId = clientSocket.recv(16) #md5
-    lenfile = clientSocket.recv(10)
-	lenpart = clientSocket.recv(6)
-	nomef = clientSocket.recv(100)
+    lenFile = clientSocket.recv(10)
+    lenPart = clientSocket.recv(6)
+    nomef = clientSocket.recv(100)
+    print lenFile
+    print lenPart
     #print psessionId, " ",md5,"",nomef
     sessionLogin = controllo_sessione(psessionId)
     if (sessionLogin == 1):
@@ -106,7 +108,7 @@ def addr(clientSocket):
             if (files.randomId == randomId): #md5
              #   print "----AGGIORNAMENTO NOME FILE-----"
                 filePresente = 1
-				print "Ehi.... File già presente, serve nuovo..."
+                print "Ehi.... File gia presente, serve nuovo..."
                # files.nome = nomef
                 #trovato = 0
                 #for i in range(len(files.idsess)):
@@ -124,18 +126,30 @@ def addr(clientSocket):
 
         if (filePresente == 0):
             print "-----AGGIUNGO FILE-----"
-			listPart = []
-			for i in int((lenFile/lenPart)/8)
-				listPart.append("11111111")
-			stringa = "00000000"
-			if ()(lenFile/lenPart % 8)>0):
-				for i in range(0,((lenFile/lenPart) % 8)-1)
-					stringa[i]="1"
-				listPart.append(stringa)
+            listPart = []
+            test=(int(lenFile)/int(lenPart))/8
+            print test
+            test1 = range(0,test)
+            for i in test1:
+                listPart.append("11111111")
+            stringa = "00000000"
+            stringa1=""
+            if ((int(lenFile)/int(lenPart) % 8)>0):
+                for i in range(0,((int(lenFile)/int(lenPart)) % 8)-1):
+                    stringa1 = stringa1+"1"
+
+                for indx in range(len(stringa1),8):
+                    stringa1=stringa1+"0"
+
+                listPart.append(stringa)
             newFile = structFile.structFile(nomef, randomId, lenFile, lenPart, listPart, psessionId)
             listaFile.append(newFile)
             #nFile = 1
-		nPart = math.ceil(lenFile/lenPart)
+        #rienpio con 0 i primi bit di nPart per arrivare a 8
+        nPart = str("%08d" %int(math.ceil(int(lenFile)/int(lenPart))))
+        
+        #nPart.zfill(8)
+        print nPart
         clientSocket.send("AADR"+nPart)
     #clientSocket.send(nfile)
     elif (sessionLogin == 0):
@@ -227,47 +241,53 @@ def look(clientSocket):
         stringa2 = stringa2[1024:]
         if len(m) <1024:
             break  
-    stringa=""          
+    stringa=""
 
 def fchu(clientSocket):
-	print "FCHU"
-	psessionId = clientSocket.recv(16)
-	rndId = clientSocket.recv(16)
+    print "FCHU"
+    psessionId = clientSocket.recv(16)
+    rndId = clientSocket.recv(16)
     sessionLogin = controllo_sessione(psessionId)
     if (sessionLogin == 1):
         indici = []
+
         for i in range(len(listaFile)):
 
-            if (listaFile[i].randomId == rndId) :
-                for h in listaFile[i].idsess:
-					for j in len(listaSessioni):
+            if (listaFile[i].randomId == rndId):
+                for h in range(len(listaFile[i].idsess)):
+					for j in range(len(listaSessioni)):
 						if (h == listaSessioni[j].sid):
 							stringchu=stringchu+listaSessioni[j].pip+listaSessioni[j].pport
 							for l in math.ceil(listaFile[i].lenFile/listaFile[i].lenPart):
 								stringchu = stringchu+listaFile[i].partList[l]
-				hitpeer=len(listaFile.idsess)
+                hitpeer=len(listaFile[i].idsess)                
     elif(sessionLogin == 0):
         print "-----SESSIONE NON ESISTENTE-----"
+
+    #fino qua va! 20/05
 	stringar="AFCH"+hitpeer+stringchu
+    """
     while True:
         m = stringar[:1024]
         clientSocket.send(m)
         stringa2 = stringar[1024:]
         if len(m) <1024:
             break  
+    """
+    clientSocket.send(stringar)
     stringar=""
 
 def rpad(clientSocket):
     print "RPAD"
     psessionId = clientSocket.recv(16)
     rndId = clientSocket.recv(16)
-	partNum = clientSocket.recv(8)
+    partNum = clientSocket.recv(8)
     #pIp = clientSocket.recv(15)
     #pPort = clientSocket.recv(5)
     sessionLogin = controllo_sessione(psessionId)
-    if (sessionLogin == 1):
-		tmp = 0
-		trovato = false
+    if(sessionLogin == 1):
+        tmp = 0
+        trovato = false
         for files in listaFile:
             if files.randomId == rndId:
                 for peer in files.idsess:
@@ -275,13 +295,13 @@ def rpad(clientSocket):
 						trovato = true
 						index = tmp
 					tmp = tmp+1
-				if (trovato == false):
+                if (trovato == false):
 					files.idsess.append(psessionId)
 					index = tmp
-				files.partList[index][math.floor(files.lenFile/files.lenPart)][(files.lenFile % files.lenPart)-1]="1"
-				tot=0
-				for j in math.ceil(files.lenFile/files.lenPart):
-					for i in range (0,7)
+                files.partList[index][math.floor(files.lenFile/files.lenPart)][(files.lenFile % files.lenPart)-1]="1"
+                tot=0
+                for j in math.ceil(files.lenFile/files.lenPart):
+					for i in range (0,7):
 						if (files.partList[index][j][i]=="1"):
 							tot = tot+1
         numDownload = "%08d" % tot
