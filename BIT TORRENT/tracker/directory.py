@@ -134,21 +134,23 @@ def addr(clientSocket):
                 listPart.append("11111111")
             stringa = "00000000"
             stringa1=""
-            if ((int(lenFile)/int(lenPart) % 8)>0):
-                for i in range(0,((int(lenFile)/int(lenPart)) % 8)-1):
+            if ((int(math.ceil(float(lenFile)/float(lenPart))) % 8)>0):
+                for i in range(0,((int(math.ceil(float(lenFile)/float(lenPart))) % 8))):
                     stringa1 = stringa1+"1"
 
                 for indx in range(len(stringa1),8):
                     stringa1=stringa1+"0"
 
-                listPart.append(stringa)
+                listPart.append(stringa1)
             newFile = structFile.structFile(nomef, randomId, lenFile, lenPart, listPart, psessionId)
             listaFile.append(newFile)
             #nFile = 1
         #rienpio con 0 i primi bit di nPart per arrivare a 8
-        nPart = str("%08d" %int(math.ceil(int(lenFile)/int(lenPart))))
+        nPart = str("%08d" %int(math.ceil(float(lenFile)/float(lenPart))))
         
         #nPart.zfill(8)
+        #print int(math.ceil(float(lenFile)/float(lenPart)))
+        #print int(lenFile)/int(lenPart)
         print nPart
         clientSocket.send("AADR"+nPart)
     #clientSocket.send(nfile)
@@ -244,6 +246,8 @@ def look(clientSocket):
     stringa=""
 
 def fchu(clientSocket):
+    stringchu=""
+    stringar=""
     print "FCHU"
     psessionId = clientSocket.recv(16)
     rndId = clientSocket.recv(16)
@@ -251,21 +255,24 @@ def fchu(clientSocket):
     if (sessionLogin == 1):
         indici = []
 
-        for i in range(len(listaFile)):
+        for i in range(0,len(listaFile)):
 
             if (listaFile[i].randomId == rndId):
-                for h in range(len(listaFile[i].idsess)):
-					for j in range(len(listaSessioni)):
-						if (h == listaSessioni[j].sid):
-							stringchu=stringchu+listaSessioni[j].pip+listaSessioni[j].pport
-							for l in math.ceil(listaFile[i].lenFile/listaFile[i].lenPart):
-								stringchu = stringchu+listaFile[i].partList[l]
-                hitpeer=len(listaFile[i].idsess)                
+                for h in range(0,len(listaFile[i].idsess)):
+                    for j in range(0,len(listaSessioni)):
+                        if (listaFile[i].idsess[h] == listaSessioni[j].sid):
+                            stringchu=stringchu+listaSessioni[j].pip+listaSessioni[j].pport
+                            for l in range(0,len(listaFile[i].partList[h])):
+                                stringchu = stringchu+str(listaFile[i].partList[h][l])
+                                #print stringchu
+                hitpeer="%03d"%(len(listaFile[i].idsess))              
     elif(sessionLogin == 0):
         print "-----SESSIONE NON ESISTENTE-----"
 
+    print stringchu
     #fino qua va! 20/05
-	stringar="AFCH"+hitpeer+stringchu
+    stringar="AFCH"+hitpeer+stringchu
+    print stringar
     """
     while True:
         m = stringar[:1024]
@@ -275,7 +282,6 @@ def fchu(clientSocket):
             break  
     """
     clientSocket.send(stringar)
-    stringar=""
 
 def rpad(clientSocket):
     print "RPAD"
