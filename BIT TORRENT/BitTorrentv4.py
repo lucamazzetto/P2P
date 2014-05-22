@@ -16,7 +16,8 @@ import string
 from math import *
 from time import sleep
 import tkFileDialog
-mioIP="fd00:0000:0000:0000:7ed1:c3ff:fe76:362a"
+script_dir = os.path.dirname(__file__)
+mioIP="192.168.001.008"
 miaPorta="50000"
 ipTracker=""
 portaTracker=""
@@ -257,13 +258,13 @@ def creaCartella(cartella):
         
 def creaFile(idFile,fileName):
 	chunkfiles = []
-	chunkfiles= os.listdir("./PartiTemp/"+idFile+"/")
-	print "Lista parti da concatenare",os.listdir("./PartiTemp/"+idFile+"/")
+	chunkfiles= os.listdir(script_dir+"/PartiTemp/"+idFile+"/")
+	print "Lista parti da concatenare",os.listdir(script_dir+"/PartiTemp/"+idFile+"/")
 	chunkfiles.sort(key=lambda x: [int(y) for y in x.split('.')])
 	print "ordinati: ",chunkfiles
 	destination = open("./fileScaricati/"+fileName, 'wb')
 	for f in chunkfiles:
-		shutil.copyfileobj(open("./PartiTemp/"+idFile+"/"+f, 'rb'), destination)
+		shutil.copyfileobj(open(script_dir+"/PartiTemp/"+idFile+"/"+f, 'rb'), destination)
 	destination.close()
 
 #######FUNZIONI CREA PACCHETTI########
@@ -386,7 +387,7 @@ class ThreadRisposte(threading.Thread):
 		operazione=2  
 		for i in range(len(fileCaricati)):
 			if randId in fileCaricati[i]:  #è un mio file devo spezzettarlo
-				percorsoFile="./immagine/"+fileCaricati[i][1]
+				percorsoFile=script_dir+"/immagine/"+fileCaricati[i][1]
 				print "percorso ",percorsoFile
 				operazione=1
 				break
@@ -398,14 +399,14 @@ class ThreadRisposte(threading.Thread):
 ###################################################################
 		for i in range(len(listaScaricati)):
 			if randId in listaScaricati[i]:  #è un mio file devo spezzettarlo
-				percorsoFile="./PartiTemp/"+randId+"/"+str(partNum)
+				percorsoFile=script_dir+"/PartiTemp/"+randId+"/"+str(partNum)
 				print "percorso ",percorsoFile
 				operazione=0
 				break
 				
 		if operazione==2:  #il file non è ancora stato scaricato completamente--> le parti scaricate si trovano in parti temp
 			operazione=0
-			percorsoFile="./PartiTemp/"+randId+"/"+str(partNum)
+			percorsoFile=script_dir+"/PartiTemp/"+randId+"/"+str(partNum)
 				
 ####################################################################			
 	
@@ -420,12 +421,12 @@ class ThreadRisposte(threading.Thread):
 			
 			
 			nomeTemp=str(randint(0,10000))
-			ftemp = open("./PartiTemp/"+nomeTemp, "wb")	
+			ftemp = open(script_dir+"/PartiTemp/"+nomeTemp, "wb")	
 			ftemp.write(parte)
 			ftemp.close()
-			ftemp = open("./PartiTemp/"+nomeTemp,"rb")
+			ftemp = open(script_dir+"/PartiTemp/"+nomeTemp,"rb")
 			
-			filesize = os.stat("./PartiTemp/"+nomeTemp).st_size	
+			filesize = os.stat(script_dir+"/PartiTemp/"+nomeTemp).st_size	
 			nChunk=filesize/4096    
 			
 			if (filesize%4096) !=0:  #se resto=0 allora i valori sono divisibili altrimenti aggiungiamo un valore
@@ -449,7 +450,7 @@ class ThreadRisposte(threading.Thread):
 			ftemp.close()
 			time.sleep(50)		
 			self.socketACK.close()	
-			os.remove("./PartiTemp/"+nomeTemp)
+			os.remove(script_dir+"/PartiTemp/"+nomeTemp)
 		else:
 			#ho la parte già disponibile
 			fd = os.open(percorsoFile,os.O_RDONLY)		
@@ -684,7 +685,7 @@ class ThreadDownload(threading.Thread):
 			#scriviLog(self.selfGui,"ERRORE RICEZIONE identificativo AREP")
 			sys.exit(1)	
 
-		loc="./PartiTemp/"+self.idFile+"/"
+		loc=script_dir+"/PartiTemp/"+self.idFile+"/"
 		creaCartella(loc)
 		fd = os.open(loc+str(self.partNum), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0666)			
 
@@ -954,7 +955,7 @@ class MiaApp:
 		global sessionID
 		global dimParte
 		
-		percorsoFilename = tkFileDialog.askopenfilename(initialdir="./immagine/")
+		percorsoFilename = tkFileDialog.askopenfilename(initialdir=script_dir+"/immagine/")
 		
 		
 		if percorsoFilename!="":

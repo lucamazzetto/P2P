@@ -24,7 +24,7 @@ def controllo_sessione(sid):
 def logi(clientSocket):
     global contSessioni
     print "LOGI"
-    ip_peer = clientSocket.recv(39)
+    ip_peer = clientSocket.recv(15)
     porta_peer = clientSocket.recv(5)
     errSessione = 0
     for sessione in listaSessioni:
@@ -35,7 +35,7 @@ def logi(clientSocket):
         contSessioni = contSessioni + 1
         sessionId = "%016d" % (contSessioni)
         print sessionId, "", ip_peer, "",porta_peer
-        session = structSession.structSession(sessionId, ip_peer, porta_peer, 0, 0)
+        session = structSession.structSession(sessionId, ip_peer, porta_peer)
         listaSessioni.append(session)
     elif errSessione == 1:
         print "-----SESSIONE GIA ESISTENTE-----"
@@ -49,11 +49,12 @@ def logo(clientSocket):
     errSessione = controllo_sessione(psessionId)
     nDelete = 0
     if errSessione == 1:
+
         i = 0
 
-        while i < len(listaFile):                               #ciclo su tutti i file
+        while i < len(listaFile):
             j = 0
-            while j < len(listaFile[i].idsess):                 #ciclo su tutti gli idsess del file (quelli che lo hanno)
+            while j < len(listaFile[i].idsess):
 
                 if (listaFile[i].idsess[j] == psessionId):
                     nDelete = nDelete + 1
@@ -115,9 +116,6 @@ def addr(clientSocket):
             newFile = structFile.structFile(nomef, randomId, lenFile, lenPart, listPart, psessionId)
             listaFile.append(newFile)
         nPart = str("%08d" %int(math.ceil(float(lenFile)/float(lenPart))))
-        for sessione in listaSessioni
-            if (sessione.sid == psessionId):
-                sessione.pown=sessione.pown+nPart
         print nPart
         clientSocket.send("AADR"+nPart)
     elif (sessionLogin == 0):
@@ -285,7 +283,7 @@ listaFile = []
 
 
 try:
-    socketServer = socket(AF_INET6, SOCK_STREAM)
+    socketServer = socket(AF_INET, SOCK_STREAM)
     socketServer.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     socketServer.bind(("",PORT))
     socketServer.listen(10)
