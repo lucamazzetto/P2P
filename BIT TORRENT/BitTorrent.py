@@ -588,7 +588,7 @@ class ThreadAfch(threading.Thread):
 				#scorro tutti i peer che hanno almeno una parte del file
 				for indicePeer in range(int(numPeer)):
 					#per ogni peer leggo ip porta part list
-					ipPeer=leggi(socket,15)
+					ipPeer=leggi(socket,39)
 					portaPeer=leggi(socket,5)
 					partList=leggi(socket,self.numParti)
 					

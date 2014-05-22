@@ -115,9 +115,9 @@ def addr(clientSocket):
             newFile = structFile.structFile(nomef, randomId, lenFile, lenPart, listPart, psessionId)
             listaFile.append(newFile)
         nPart = str("%08d" %int(math.ceil(float(lenFile)/float(lenPart))))
-        for sessione in listaSessioni
+        for sessione in listaSessioni:
             if (sessione.sid == psessionId):
-                sessione.pown=sessione.pown+nPart
+                sessione.pown=sessione.pown+int(nPart)
         print nPart
         clientSocket.send("AADR"+nPart)
     elif (sessionLogin == 0):
@@ -233,13 +233,13 @@ def rpad(clientSocket):
     if (sessionLogin == 1):
         trovato = 0
         for files in listaFile:
-            if files.randomId == rndId:					            # trovato file rndId
-                for i in range(0,len(files.idsess)):				# scorro gli idsess che hanno quel file
-					if (psessionId == files.idsess[i]):	            # se trovo, peer aveva gia parti, devo solo aggiornare
-						trovato = 1					                # trovato = devo solo aggiornare
-						index = i						            # index = indice di quello che devo aggiornare
-						files.partList[index][int(math.floor(int(partNum)/8))][7-((int(partNum)-1)%8)]="1"
+            if files.randomId == rndId:
+                for i in range(0,len(files.idsess)):
+                    if (psessionId == files.idsess[i]):
                         tot=0
+                        trovato=1
+                        index = i
+                        files.partList[index][int(math.floor(int(partNum)/8))][7-((int(partNum)-1)%8)]="1"
                 if (trovato == 0):
                     #se il peer ha appena iniziato a scaricarlo:
                     for i in range(0,(int(files.lenFile)/int(files.lenPart))/8):    #inizializzo a 0
@@ -247,7 +247,7 @@ def rpad(clientSocket):
                     if ((int(math.ceil(float(lenFile)/float(lenPart))) % 8)>0):
                         listPart.append(bytearray("00000000"))
                     newFile = structFile.structFile(nomef, randomId, lenFile, lenPart, listPart, psessionId)
-					files.idsess.append(psessionId)                 # aggiungo sessionid
+                    files.idsess.append(psessionId)                 # aggiungo sessionid
                     files.partList.append(listPart)                 # aggiungo partlist
                     tot=0		                                    # aggiungo peer ai proprietari
                     files.partList[int(len(files.idsess))-1][int(math.floor(int(partNum)/8))][7-((int(partNum)-1)%8)]="1"
