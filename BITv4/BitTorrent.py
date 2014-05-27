@@ -1,4 +1,4 @@
-﻿#! /usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: UTF-8 -*-
 #progetto3
 
@@ -12,7 +12,7 @@ import string
 from math import *
 from time import sleep
 import tkFileDialog
-mioIP="192.168.001.246"
+mioIP="192.168.001.001"
 miaPorta="50000"
 ipTracker=""
 portaTracker=""

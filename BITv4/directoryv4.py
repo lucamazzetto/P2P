@@ -28,6 +28,18 @@ def conta_possessi(sid):
                 for p in f.partList[i]:
                     tot=tot+p.count(1)
     return tot
+
+def deauth(sid):
+    for f in listaFile:
+        for i in range(0,len(f.idsess)):
+            if (sid==f.idsess[i]):
+                f.idsess.pop(i)
+                f.partList.pop(i)
+    for s in range(0,len(listaSessioni)):
+        if sid==listaSessioni[s].sid:
+            listaSessioni.pop(s)
+
+
             
 
 
@@ -65,54 +77,62 @@ def logo(clientSocket,lock):
     partsess=bitarray('')
     if errSessione == 1:
         i = 0
-	for sess in listaSessioni:
-		print "-1"
-		if (sess.sid==psessionId):
-			print "0"
-			if (len(sess.owner)>0):
-				nlog = 0
-			for rndIdOwned in sess.owner:
-				print "1"
-                for file in listaFile:
-                    print "2"
-                    complete = bitarray('')
-                    distribuited = bitarray('')					#cicla su tutti i file
-                    if (file.randomId==rndIdOwned):
-                        print "3"				#entro quando file = file che ha aggiunto chi si vuole sloggare
-                        for i in range(0,len(file.idsess)):
-                            print "4"				#ciclo su chi ha delle parti (chi lo aggiunge = primo)
-                            if (file.idsess[i] == psessionId):
-                                print "5"			#sono all'indice di chi l'ha aggiunto 
-                                for part in range(0,len(file.partList[i])):
-                                    print "6"				#mi salvo tutto il vettore delle parti per confrontarlo
-                                    complete.extend(file.partList[i][part])
-                                    distribuited.extend('00000000')
-                                print "complete ="+complete
-                                print "distribuited init ="+distribuited
-                            else:
-                                print "7"
-                                for part in file.partList[i]:
-                                    print "8"
-                                    partsess.extend(part)
-                                print "partsess ="+partsess
-                                print "distribuited ="+distribuited
-                                distribuited = distribuited | partsess
-                                print "dopo or ="+distribuited
-                                partsess=bitarray('')
-                        tot=distribuited.count(1)
-                        if(distribuited.count(1)==complete.count(1)):
-                            print "9"
-                        else:
-                            nlog=0
-                            break
+        print "Errore sessione"
+        for sess in listaSessioni:
+            print "-1"
+            print sess.sid
+            if (sess.sid==psessionId):
+                print "0"
+                if (len(sess.owner)>0):
+                    nlog = 0
+                    for rndIdOwned in sess.owner:
+                        print "1"
+                        for file in listaFile:
+                            print "2"
+                            print file.partList
+                            complete = bitarray('')
+                            distribuited = bitarray('')					#cicla su tutti i file
+                            if (file.randomId==rndIdOwned):
+                                print "3"				#entro quando file = file che ha aggiunto chi si vuole sloggare
+                                for i in range(0,len(file.idsess)):
+                                    print "4   "+str(i)				#ciclo su chi ha delle parti (chi lo aggiunge = primo)
+                                    if (file.idsess[i] == psessionId):
+                                        print "5"			#sono all'indice di chi l'ha aggiunto
+                                        print file.partList[i] 
+                                        for part in range(0,len(file.partList[i])):
+                                            print "6"				#mi salvo tutto il vettore delle parti per confrontarlo
+                                            complete.extend(file.partList[i][part])
+                                            distribuited.extend('00000000')
+                                        print "complete ="+str(complete)
+                                        print "distribuited init ="+str(distribuited)
+                                    else:
+                                        print "7"
+                                        for part in file.partList[i]:
+                                            print "8"
+                                            partsess.extend(part)
+                                        print "partsess ="+str(partsess)
+                                        print "distribuited ="+str(distribuited)
+                                        distribuited = distribuited | partsess
+                                        print "dopo or ="+str(distribuited)
+                                        partsess=bitarray('')
+                                tot=tot+distribuited.count(1)
+                                if(distribuited.count(1)==complete.count(1)):
+                                    print "9"
+                                    nlog=1
+                                else:
+                                    nlog=0
+                                    break
 							
-	if(nlog==0):
-		print "INVIATO------> NLOG"+str("%10d" %int(tot))
-		clientSocket.send("NLOG"+str("%10d" %int(tot)))
-	else:
-		print nlog
-		print "INVIATO------> ALOG"+str(conta_possessi(psessionId))
-        clientSocket.send("ALOG"+str("%10d" %int(conta_possessi(psessionId))))
+        if(nlog==0):
+            print "INVIATO------> NLOG"+str("%10d" %int(tot))
+            clientSocket.send("NLOG"+str("%10d" %int(tot)))
+            nlog=-1
+        else:
+            print nlog
+            print "INVIATO------> ALOG"+str(conta_possessi(psessionId))
+            clientSocket.send("ALOG"+str("%10d" %int(conta_possessi(psessionId))))
+            deauth(psessionId)
+            nlog=-1
 								
 
 
@@ -146,6 +166,7 @@ def addr(clientSocket,lock):
                 for i in range(0,((int(math.ceil(float(lenFile)/float(lenPart))) % 8))):
                 	stringa1 = stringa1+'1'
                 listPart.append(bitarray(stringa1))
+                print listPart
             newFile = structFile.structFile(nomef, randomId, lenFile, lenPart, listPart, psessionId)
             listaFile.append(newFile)
         nPart = str("%08d" %int(math.ceil(float(lenFile)/float(lenPart))))
