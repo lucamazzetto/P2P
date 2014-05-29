@@ -1,291 +1,229 @@
-__author__ = 'stefanoguerra'
+#NAPSTER GRUPPO 03
+# -*- coding: UTF-8 -*-
 
-# -*- coding: utf-8 -*-
+#guerra     fd00:0000:0000:0000:22c9:d0ff:fe47:70a3
+#mazzetto   fd00:0000:0000:0000:8896:7854:b792:1bd1
+#natali     fd00:0000:0000:0000:7ed1:c3ff:fe76:362a
 
-from socket import *
-import structSession
-import structFile
-import thread as thrd
-import sys
-import re
-import string
+import socket           #libreria per socket
+import structSession    #struttura dati sessione
+import structFile       #struttura dati file
+import string           #manipolazione di stringhe
+import thread           #libreria per thread
+import sys              #libreria per cartelle
+import re               #libreria per espressioni
 
-# Definizione delle variabili globali utilizzate
-PORT=3000 #open porta 3000
-listSession = []
-listFile = []
-countSession = 0
-
-
-# Creazione della socket di tipo server in ascolto per captare connessioni dai client
-try:
-    s_sock = socket(AF_INET6, SOCK_STREAM)
-    s_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-    s_sock.bind(("",PORT))
-    s_sock.listen(10)
-except error, msg:
-    s_sock = None
-    print "ERROR: " , msg
+#Definizione delle variabili utilizzate
+PORT=3000
+listaSessioni = []
+contSessioni = 0
+listaFile = []
 
 
-
-
-# Funzione per il controllo della sessione
+#funzione per controllo della sessione se presente o meno
 def controllo_sessione(sid):
-    for ses in listSession:
-        if (ses.sid == sid):
+    for sessione in listaSessioni:
+        if (sessione.sid == sid):
             sessionLogin = 1
             break
     return sessionLogin
 
-# Funzione che si occupa del login di un client
-def logi(c_sock):
-    print "LOGI: richiesta per login."
-    ipp2p = c_sock.recv(39) #riceve ip del peer
-    pp2p = c_sock.recv(5) #riceve porta del peer
-    errorSes = 0
-    global countSession
-    for ses in listSession:
-        if (ses.pip == ipp2p and ses.pport == pp2p):
-            errorSes = 1
+
+#Lettura e risposta a pacchetto LOGI
+def logi(clientSocket):
+    global contSessioni
+    print "LOGI"
+    ip_peer = clientSocket.recv(39)
+    porta_peer = clientSocket.recv(5)
+    errSessione = 0
+    for sessione in listaSessioni:                                                  #controllo se sessione esistente
+        if (sessione.pip == ip_peer and sessione.pport == porta_peer):
+            errSessione = 1
             break
-    if errorSes == 0:
-        countSession = countSession + 1
-        sessId = "%016d" % (countSession)
-        print sessId, "", ipp2p, "",pp2p
-        session = structSession.structSession(sessId, ipp2p, pp2p)
-        listSession.append(session)
-    elif errorSes == 1:
-        print "Errore: sessione gia' esistente."
-        sessId = "%016d" % 0
-    #c_sock.send("ALOG"+sessId)
-    c_sock.send("ALGI"+sessId)
-    handler_conn(c_sock,address[0],address[1])
-#c_sock.send(sessId)
+    if errSessione == 0:                                                            #aggiunta sessione a listaSessioni
+        contSessioni = contSessioni + 1
+        sessionId = "%016d" % (contSessioni)
+        print sessionId, "", ip_peer, "",porta_peer
+        session = structSession.structSession(sessionId, ip_peer, porta_peer)
+        listaSessioni.append(session)
+    elif errSessione == 1:
+        print "-----SESSIONE GIA ESISTENTE-----"
+        sessionId = "%016d" % 0
+    clientSocket.send("ALGI"+sessionId)                                             #invio risposta
+    gestore_connessioni(clientSocket,address[0],address[1])
 
-# Funzione che si occupa del logout di un client
-def logo(c_sock):
-    print "LOGO: richiesta di Logout"
-    psessionId = c_sock.recv(16)
-    errorSes = controllo_sessione(psessionId)
+
+#Lettura richiesta logout e risposta
+def logo(clientSocket):
+    print "LOGO"
+    psessionId = clientSocket.recv(16)
+    errSessione = controllo_sessione(psessionId)
     nDelete = 0
-    if errorSes == 1:
-        #ricerca numero file
+    if errSessione == 1:
         i = 0
-
-        #cicla sui file
-        # " len(listFile): ", len(listFile)
-        while i < len(listFile):
+        while i < len(listaFile):                                                   #ciclo sui file per fare pop dalla listaFile dei file del peer
             j = 0
-            #print "i",i," len(listFile): ",len(listFile)
-            #per ogni file cicla sugli id
-            #print len(listFile[i].idsess)
-            while j < len(listFile[i].idsess):
-
-                #print "listFile[i].idsess[j]: ",listFile[i].idsess[j]," psessionId: ", psessionId
-                if (listFile[i].idsess[j] == psessionId):
+            while j < len(listaFile[i].idsess):
+                if (listaFile[i].idsess[j] == psessionId):
                     nDelete = nDelete + 1
-                    print "cancellato ", listFile[i].nome
-                    listFile[i].idsess.pop(j)
+                    listaFile[i].idsess.pop(j)
+                    print "CANCELLATO--> ", listaFile[i].nome
                     break
                 else:
                     j = j + 1
-            #print "len listidsess: ", len(listFile[i].idsess)
-
-            if (len(listFile[i].idsess) == 0):
-                listFile.pop(i)
+            if (len(listaFile[i].idsess) == 0):
+                listaFile.pop(i)
             else:
                 i = i +1
         nfile = "%03d" % nDelete
         temp = 0
-        for ses in listSession:
-            if (ses.sid == psessionId):
-                listSession.pop(temp)
+        for sessione in listaSessioni:                                              #pop del peer dalla lista delle sessioni
+            if (sessione.sid == psessionId):
+                listaSessioni.pop(temp)
                 break
             temp = temp +1
-        #c_sock.send("ALGO"+nfile)
-        c_sock.send("ALGO"+nfile)
-        #c_sock.send(nfile)
-        print "File in directory: ", len(listFile), ", cancellati: ", nDelete
-    elif errorSes == 0:
-        print "Errore: sessione non esistente."
-    handler_conn(c_sock,address[0],address[1])
+        clientSocket.send("ALGO"+nfile)
+        print "FILE PRESENTI: ", len(listaFile), ", FILE CANCELLATI: ", nDelete
+    elif errSessione == 0:
+        print "-----SESSIONE NON ESISTENTE-----"
+    gestore_connessioni(clientSocket,address[0],address[1])
 
-# Funczione che si occupa dell'Aggiunta di un file da parte di un client
-def addf(c_sock):
-    print "ADDF: richiesta per aggiunta file."
-    psessionId = c_sock.recv(16)
-    md5 = c_sock.recv(16)
-    nomef = c_sock.recv(100)
-    #print psessionId, " ",md5,"",nomef
+
+#Lettura richiesta aggiunta file e aggiunta a listaFile
+def addf(clientSocket):
+    print "ADDF"
+    psessionId = clientSocket.recv(16)
+    md5 = clientSocket.recv(16)
+    nomef = clientSocket.recv(100)
     sessionLogin = controllo_sessione(psessionId)
     if (sessionLogin == 1):
         filePresente = 0
         nFile = 0
-        #ciclo file
-        for files in listFile:
-            #se trovo stesso md5
+        for files in listaFile:                                                     #ciclo sui file, se gia presente aggiorno nome
             if (files.md5 == md5):
-                print "File gia' presente in directory: aggiornamento nome file."
+                print "----AGGIORNAMENTO NOME FILE-----"
                 filePresente = 1
                 files.nome = nomef
                 trovato = 0
-                #ciclare gli idSess
-                for i in range(len(files.idsess)):
-                    #se trovo lo stesso id
+                for i in range(len(files.idsess)):                                  #se file gia presente e gia presente peer, non fa niente
                     if (files.idsess[i] == psessionId):
-                        #faccio niente
                         trovato = 1
                         break
-                #id non presente
-                if (trovato == 0):
-                    #lo aggiungo
+                if (trovato == 0):                                                  #se file gia presente ma non il peer, aggiungo il peer 
                     files.idsess.append(psessionId)
                     nFile = len(files.idsess)
                     break
-                else:
+                else:                                                               
                     nFile = len(files.idsess)
                     break
-
-
-        #md5 non presente aggiungo file
-        if (filePresente == 0):
-            print "File non presente in directory: aggiunta nuovo file."
+        if (filePresente == 0):                                                     #se file non presente aggiungo a listaFile
+            print "-----AGGIUNGO FILE-----"
             newFile = structFile.structFile(nomef, md5, psessionId)
-            listFile.append(newFile)
+            listaFile.append(newFile)
             nFile = 1
         nfile = "%03d" % nFile
-        c_sock.send("AADD"+nfile)
-    #c_sock.send(nfile)
+        clientSocket.send("AADD"+nfile)                                             #invio risposta
     elif (sessionLogin == 0):
-        print "Errore: sessione non esistente."
-    handler_conn(c_sock,address[0],address[1])
+        print "-----SESSIONE NON ESISTENTE-----"
+    gestore_connessioni(clientSocket,address[0],address[1])
 
-# Funzione che si occupa della cancellazione di un file da parte di un client
-def delf(c_sock):
-    print "DELF: richiesta per rimozione file."
-    psessionId = c_sock.recv(16)
-    md5 = c_sock.recv(16)
-    #controllo sessione
+
+#Lettura richiesta cancellazione file e cancellazione
+def delf(clientSocket):
+    print "DELF"
+    psessionId = clientSocket.recv(16)
+    md5 = clientSocket.recv(16)
     sessionLogin = controllo_sessione(psessionId)
     if (sessionLogin == 1):
         temp = 0
         nFile = 0
-        #ciclo i file
-        for files in listFile:
-            #se stesso md5
+        for files in listaFile:                                                     #ciclo sui file e quando li trovo li elimino, aggiornando il numero
             if files.md5 == md5:
-                print "Elimino file: ", files.nome, " id: ", files.idsess
-                
+                print "ELIMINO ---> ", files.nome, " ID: ", files.idsess
                 files.idsess.remove(psessionId)
                 nFile = len(files.idsess)
                 if nFile == 0:
-                    listFile.pop(temp) #:)
+                    listaFile.pop(temp)
                 break
             temp = temp + 1
         nfile = "%03d" % nFile
-        c_sock.send("ADEL"+nfile)
-        #c_sock.send(nfile)
-        print "File rimanenti in directory: ", len(listFile)
+        clientSocket.send("ADEL"+nfile)                                             #invio risposta
+        print "FILE RIMANENTI --->", len(listaFile)
     elif (sessionLogin == 0):
-        print "Errore: sessione non esistente."
-    handler_conn(c_sock,address[0],address[1])
+        print "-----SESSIONE NON ESISTENTE------"
+    gestore_connessioni(clientSocket,address[0],address[1])
 
-# Funzione che si occupa della ricerca di un file all'interno della directory
-def fndf(c_sock):
+
+#Lettura della find, ricerca e risposta con tutti i peer
+def fndf(clientSocket):
     stringa = ""
-    print "FIND: richiesta di ricerca."
-    psessionId = c_sock.recv(16)
-    searchString = c_sock.recv(20)
+    print "FIND"
+    psessionId = clientSocket.recv(16)
+    searchString = clientSocket.recv(20)
     ss1 = searchString.rstrip()
     ss2 = ss1.lstrip()
     ss = ss2.lower()
     print "ss = ",ss
-    #print psessionId, " ", searchString
-    # controllo sessione
     sessionLogin = controllo_sessione(psessionId)
     if (sessionLogin == 1):
         indici = []
-        #ciclo file
-        for i in range(len(listFile)):
-            #se matcho il nome
-
-
-            if listFile[i].nome.lower().count(ss) > 0:
+        for i in range(len(listaFile)):                                             #conto i risultati della ricerca su listaFile e mi salvo indici
+            if listaFile[i].nome.lower().count(ss) > 0:
                 indici.append(i)
-        #c_sock.send("AFIN")
-        nmd5 = "%03d" % len(indici)
-    print "nmd5 ",nmd5
-    #c_sock.send("AFIN"+nmd5)
-    #se nMD5 != 0 scrivo il resto
-    if (len(indici) != 0):
+        numMD5 = "%03d" % len(indici)
+    print "numMD5 ",numMD5
+    if (len(indici) != 0):                                                          #se sono presenti risultati salvo md5, nome e numero di copie
         for i in indici:
-            #c_sock.send(listFile[i].md5+listFile[i].nome)
-            #c_sock.send(listFile[i].nome)
-            ncopy = "%03d" % len(listFile[i].idsess)
-            #print "ncopy ",ncopy
-            #c_sock.send(listFile[i].md5+listFile[i].nome+ncopy)
-            stringa = stringa+(listFile[i].md5+listFile[i].nome+ncopy)
-            #print listFile[i].md5
-            #print listFile[i].md5+listFile[i].nome+ncopy
-            print "ncopy ",ncopy
-            #ciclo sugli id
-            for j in range(len(listFile[i].idsess)):
-                #per ogni id lo cerco in listSession
-                for z in range(len(listSession)):
-                    #se lo trovo invio e passo al nuovo id
-                    if listSession[z].sid == listFile[i].idsess[j]:
-                        print "Invio ",listSession[z].pip," e porta", listSession[z].pport
-                        #c_sock.send(listSession[z].pip)
-                        stringa = stringa+(listSession[z].pip+listSession[z].pport)
+            numCopie = "%03d" % len(listaFile[i].idsess)
+            stringa = stringa+(listaFile[i].md5+listaFile[i].nome+numCopie)
+            print "numCopie ",numCopie
+            for j in range(len(listaFile[i].idsess)):                               #prendo gli idsess dei peer che hanno file
+                for z in range(len(listaSessioni)):                                 #salvo ip e porta dei peer che hanno il file
+                    if listaSessioni[z].sid == listaFile[i].idsess[j]:              
+                        print "Invio ",listaSessioni[z].pip," e porta", listaSessioni[z].pport
+                        stringa = stringa+(listaSessioni[z].pip+listaSessioni[z].pport)
                         break
     elif(sessionLogin == 0):
-        print "Errore: sessione non esistente."
-    stringa2="AFIN"+nmd5+stringa
-    #print stringa2   
-    #c_sock.send("AFIN"+nmd5+stringa)
-    #stringa=""
+        print "-----SESSIONE NON ESISTENTE-----"
+    stringa2="AFIN"+numMD5+stringa
     
-    while True:
+    while True:                                                                     #invio la risposta a pezzi di max 1024
         m = stringa2[:1024]
-        c_sock.send(m)
+        clientSocket.send(m)
         stringa2 = stringa2[1024:]
         if len(m) <1024:
             break  
     stringa=""      
-    handler_conn(c_sock,address[0],address[1])    
+    gestore_connessioni(clientSocket,address[0],address[1])
 
-# Funzione che registra le statistiche di download
-def dwnl(c_sock):
-    print "DREG: registrazione download."
-    psessionId = c_sock.recv(16)
-    fileMd5 = c_sock.recv(16)
-    #pIp = c_sock.recv(15)
-    #pPort = c_sock.recv(5)
-    # controllo sessione
+
+#Lettura richiesta di download e aggiornamento del numero di download 
+def dwnl(clientSocket):
+    print "DREG"
+    psessionId = clientSocket.recv(16)
+    fileMd5 = clientSocket.recv(16)
     sessionLogin = controllo_sessione(psessionId)
     if (sessionLogin == 1):
         nDL = 0
-        for files in listFile:
+        for files in listaFile:                                                     #ricerca del file per aggiornamento numero di download
             if files.md5 == fileMd5:
                 files.total = files.total + 1
                 nDL = files.total
-                print "Numero di download: ", nDL
+                print "NUMERO DOWNLOAD: ", nDL
                 break
         if nDL == 0:
-            print "Errore: MD5 non presente"
+            print "-----MD5 NON PRESENTE-----"
         else:
-            #c_sock.send("ARRE")
-            ndownl = "%05d" % nDL
-            c_sock.send("ADRE"+ndownl)
+            numDownload = "%05d" % nDL
+            clientSocket.send("ADRE"+numDownload)                                   #invio risposta
 
     elif (sessionLogin == 0):
-        print "Errore: sessione non esistente."
-    handler_conn(c_sock,address[0],address[1])
+        print "-----SESSIONE NON ESISTENTE-----"
+    gestore_connessioni(clientSocket,address[0],address[1])
 
 
 
-# Struttura dati che permette, in base all'identificativo del pacchetto, di richiamare la giusta funzione
+#Scelgo in base all'identificativo del pacchetto a quale procedura andare
 options = { "LOGI" : logi,
             "LOGO" : logo,
             "ADDF" : addf,
@@ -293,32 +231,28 @@ options = { "LOGI" : logi,
             "FIND" : fndf,
             "DREG" : dwnl}
 
-# Funzione che, in base all'identificativo del pacchetto ricevuto, gestisce le connessioni e le funzioni
-def handler_conn(c_sock, ipp, portp):
+#Legge l'id del pacchetto dalla socket 
+def gestore_connessioni(c_sock, ipp, portp):
     funct = c_sock.recv(4)
-    if funct == ""
+    if funct == "":
         c_sock.close()
-    elif:    
+    else:    
         options[funct](c_sock)
 
-#=============================================================================================#
+#Creo la socket in ascolto su porta 3000
+try:
+    socketServer = socket(AF_INET6, SOCK_STREAM)
+    socketServer.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+    socketServer.bind(("",PORT))
+    socketServer.listen(10)
+except error, msg:
+    socketServer = None
+    print "ERROR: " , msg
 
+#Ciclo infinito per accettare le richieste dai peer 
+while True:
+    clientSocket, address = socketServer.accept()
+    print "CONNESSIONE DA ---> ", address
 
-# Ciclo per la gestione delle connessioni in arrivo.
-while 1:
-    #print s_sock
-    c_sock, address = s_sock.accept()
-    print "Connessione da: ", address
-    #stringa= str(address[0])
-    #tr=re.split(r'\.',stringa)
-
-    #ipp2p = "%03d.%03d.%03d.%03d" % (int(tr[0]), int(tr[1]), int(tr[2]), int(tr[3]))
-    #pp2p = "%05d" % (int(address[1]))
-
-    #print ipp2p
-    #print pp2p
-    #print len(ipp2p)
-    #print len(pp2p)
-
-    thrd.start_new_thread(handler_conn, (c_sock,address[0],address[1])) #socket, ipp2p, pp2p
+    thread.start_new_thread(gestore_connessioni, (clientSocket,address[0],address[1]))    #avvio un thread per ogni peer
 

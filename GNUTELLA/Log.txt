@@ -1,0 +1,15 @@
+28/05/2014 21:03:41    ----     NUOVA SESSIONE
+28/05/2014 21:03:41    ----     Primo vicino: fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:03000
+28/05/2014 21:03:41    ----     Threads partiti
+28/05/2014 21:04:40    ----     NUOVA SESSIONE
+28/05/2014 21:04:40    ----     Primo vicino: fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:03000
+28/05/2014 21:04:40    ----     Threads partiti
+28/05/2014 21:05:41    ----     NUOVA SESSIONE
+28/05/2014 21:05:41    ----     Primo vicino: fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:03000
+28/05/2014 21:05:41    ----     Threads partiti
+28/05/2014 21:19:04    ----     NUOVA SESSIONE
+28/05/2014 21:19:04    ----     Primo vicino: fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:03000
+28/05/2014 21:19:04    ----     Threads partiti
+28/05/2014 22:27:49    ----     NUOVA SESSIONE
+28/05/2014 22:27:49    ----     Primo vicino: fd00:0000:0000:0000:7ed1:c3ff:fe76:362a:03000
+28/05/2014 22:27:49    ----     Threads partiti

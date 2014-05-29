@@ -36,8 +36,9 @@ def deauth(sid):
                 f.idsess.pop(i)
                 f.partList.pop(i)
     for s in range(0,len(listaSessioni)):
-        if sid==listaSessioni[s].sid:
+        if (sid==listaSessioni[s].sid):
             listaSessioni.pop(s)
+            break
 
 
             

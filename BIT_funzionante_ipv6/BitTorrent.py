@@ -1,39 +1,48 @@
-#! /usr/bin/env python
+#BIT TORRENT GRUPPO 03
 # -*- coding: UTF-8 -*-
-#progetto3
 
-import socket,stat,sys,hashlib,os,threading,thread,time,re,shutil
-from threading import *
-from operator import itemgetter, attrgetter
-from Tkinter import * 
-from random import * 
-import random
-import string 
-from math import *
-from time import sleep
-import tkFileDialog
+#guerra 	fd00:0000:0000:0000:22c9:d0ff:fe47:70a3
+#mazzetto	fd00:0000:0000:0000:8896:7854:b792:1bd1
+#natali 	fd00:0000:0000:0000:7ed1:c3ff:fe76:362a
+
+import socket    		#libreria per socket
+import string           #manipolazione di stringhe
+import thread           #libreria per thread
+import sys              #libreria per cartelle
+import re               #libreria per espressioni
+import stat 			#libreria per operare con i path
+import hashlib 			#libreria per md5
+import os				#libreria per operare con OS
+from threading import *		#libreria per threading
+import thread 			#libreria per threading
+import threading
+import time 			#libreria per timeout
+import random 			#libreria per generazione numeri casuali
+import shutil			#Libreria per operazioni con i file
+import math				#Libreria con funzioni matematiche
+from operator import itemgetter, attrgetter #Libreria per l'accesso a dati di un vettore
+from Tkinter import * 	#Libreria per interfaccia grafica
+import tkFileDialog		#Libreria per finestre pop-up
+
 mioIP="fd00:0000:0000:0000:22c9:d0ff:fe47:70a3"
 miaPorta="50000"
 ipTracker=""
 portaTracker=""
 sessionID=""
 dimParte="262144"
-lock=Lock()
+lock = Lock()
 lockThreadFiniti=Lock()
-lockTd=Lock()
-
+lockTd = Lock()
 spegniMenu=0
-fileCaricati=[] #lista sull' idFile dei file aggiunti al Tracker      {idFile: fileName,numParti}
-fileTrovati=[] #file che tornano dal tracker dopo la ricerca  {indice numerico: randId,fileName,lenFile,lenParti}
+fileCaricati=[] 				#Lista sull' idFile dei file aggiunti al Tracker      {idFile: fileName,numParti}
+fileTrovati=[] 					#File che tornano dal tracker dopo la ricerca  {indice numerico: randId,fileName,lenFile,lenParti}
 listaScaricati=[]
-td={} #array dei thread di download delle parti
+td={} 							#Array dei thread di download delle parti
 threadFiniti=0
 partiScaricate=[]
 
-########CLASSI##########
+#Classe per la creazione della progress bar e del frame 
 class PB:
-
-    # Crea progress bar e frame che lo contiene
     def __init__(self, width, height,fileName,numPezzi):
         self.root = Toplevel()
         self.root.resizable(False, False)
@@ -44,41 +53,32 @@ class PB:
         self.contatore=1
         
         self.frameBar = Frame(self.root,relief='ridge', bd=3)
-        #self.frameBar.pack(fill='both', expand=1)
         self.frameBar.grid(row=0, column=0, padx=10, pady=10,sticky="we")
         
-        #self.frameInfo = LabelFrame(self.root,text="Parti Scaricate", width="250", height="50", bd="1", relief="ridge")
         self.frameInfo = LabelFrame(self.root,text="Parti Scaricate", bd="1", relief="ridge")
         self.frameInfo.grid(row=1, column=0, padx=10, pady=10,sticky="we")
         
-        #~ self.__canvas = Tkinter.Canvas(self.__root, width=width, height=height)
         self.canvas = Canvas(self.frameBar, bg='white', width=width, height=height, highlightthickness=0, relief='flat', bd=0)
         self.canvas.grid(row=0, column=0, padx=10, pady=10,sticky="we")
         
-
-        
-
         self.infoParti=Text(self.frameInfo, relief=SUNKEN, bd=2, setgrid=1,width=65, height=15,wrap='word',state=DISABLED)
         self.infoParti.grid(row=0, column=0,padx=5, pady=5)
-        #self.info1.pack(side=LEFT, expand=Y, fill=BOTH,padx=5, pady=5)
-        
         
         self.labelParti = Label( self.frameInfo, text="IP" )
         self.labelParti.grid(row=0, column=1, padx=5, pady=5,sticky="e")
 		
         
 
-    # Open Progress Bar
+    #Funzione per l'apertura della progress bar
     def open(self):
         self.root.deiconify()
 
-    # Close Progress Bar
+    #Funzione per la chiusura della progress bar
     def close(self):
         self.root.withdraw()
 
-    # Update Progress Bar
+    #Funzione per l'aggiornamento della progress bar
     def update(self,pezzo,ip):
-        #self.__canvas.delete(Tkinter.ALL)
 		print "numpezzi:",self.numPezzi 
 		print "pezzo:",pezzo
 		wpezzettino= self.width/self.numPezzi  
@@ -88,13 +88,11 @@ class PB:
 		print "iniziox:",iniziox
 		finex=(pezzo+1)*wpezzettino
 		print "finex:",finex
-		#self.__canvas.create_rectangle(0+pezzo*wpezzettino, 0, wpezzettino,self.height, fill='blue'
 		self.conta(self.numPezzi,pezzo,ip)
-		#FUNZIONA self.__canvas.create_rectangle(iniziox, 0, finex,self.__height, fill='red',outline="")
 		self.canvas.create_rectangle(iniziox, 0, finex,self.height, fill='blue',outline="")
-		#...........................(iniziox,y,finex,finey)
 		self.root.update()
-		
+	
+	#Funzione per il conteggio delle parti
     def conta(self,numpezzi,pezzo,ip):
 		self.labelParti.configure(text=str(self.contatore)+"/"+str(int(numpezzi)))
 		self.infoParti.config(state=NORMAL)
@@ -104,7 +102,7 @@ class PB:
 		self.contatore=self.contatore+1 
 
 		
-		
+#Classe per salvataggio dei parametri dei file trovati con la ricerca
 class SalvaFileTrovati:	
 	def __init__(self,RANDID,FILENAME,LENFILE,LENPARTI):		
 		self.RANDID=RANDID
@@ -113,24 +111,20 @@ class SalvaFileTrovati:
 		self.LENPARTI=LENPARTI
 		self.LISTAOCCORRENZE=[]
 		
-		
+#Classe per il salvataggio di ip e porta
 class creaListaIpPorta:
 	def __init__(self, IP, PORTA):
 		self.IP=IP
 		self.PORTA=PORTA
 
-
+#Classe per il salvataggio delle occorrenze
 class creaListaOccorrenze:
 	def __init__(self, numParte):
 		self.NUMPARTE=numParte
 		self.OCCORRENZE="0"
 		self.LISTAIPPORTA=[]
-		#l=creaListaIpPorta(IP, PORTA)
-		#self.LISTAIPPORTA.append(l)
 
-
-
-########FUNZIONI########
+#Funzione per l'aggiornamento della progress bar
 def aggiornaBarra(partNum,bar):
 	lock.acquire()
 	print "SONO QUI"
@@ -139,7 +133,8 @@ def aggiornaBarra(partNum,bar):
 		
 	finally:
 		lock.release
-		
+
+#Funzione per l'aggiornamento su che thread ha finito
 def aggiornaThreadFiniti(threadFiniti):
 	lockThreadFiniti.acquire()
 	print "sono in aggiornaThreadFiniti"
@@ -148,6 +143,7 @@ def aggiornaThreadFiniti(threadFiniti):
 	finally:
 		lockThreadFiniti.release
 
+#FUnzione per l'aggiornamento dei thread (rimozione)
 def aggiornaTd(td,indice):
 	lockTd.acquire()
 	print "sono in aggiornaThreadFiniti"
@@ -155,21 +151,23 @@ def aggiornaTd(td,indice):
 		td.pop(indice)
 	finally:
 		lockTd.release
-				
+
+#Funzione per la creazione di un byte partendo da bit	
 def creaMultipli8(num):
 	resto=num % 8
 	print resto
 	if resto !=0:	
 		num=num+(8-resto)		
 	return num
-	
+
+#Funzione per la lettura di 1 bit da socket
 def leggi(s,dim):
 	dato=s.recv(dim)
 	while len(dato)<dim:
 		dato=dato+s.recv(1)
-	#print dato
 	return dato
-	
+
+#Funzione per la creazione dell'IPv6 per esteso a partire da uno contratto
 def creaIP(ip):
 	l=ip.split(":")
 	diff=8-len(l)
@@ -186,13 +184,10 @@ def creaIP(ip):
 		else:
 			i=i+1
 			k=k+diff+1
-	#print v		
 	return str(v[0])+":"+str(v[1])+":"+str(v[2])+":"+str(v[3])+":"+str(v[4])+":"+str(v[5])+":"+str(v[6])+":"+str(v[7])
 	
-
-
-#aggiungo 0 davanti al numero se è troppo corto
-def controllaArgomentoNumero(dim,argomento): 
+#Controllo la dimensione di un numero e la riempo di 0 fino a dim
+def controllaArgomentoNumero(dim,argomento):
 	if len(argomento) < dim :
 		differenza=dim-len(argomento)
 		i=0
@@ -201,7 +196,7 @@ def controllaArgomentoNumero(dim,argomento):
 			i=i+1
 	return argomento
 	
-#LUNGO -> TRONCO, CORTO -> SPAZI	
+#Funzione per il controllo se una stringa rispetta una lunghezza e per il fill con ' ' per farla diventare di lunghezza dim
 def controllaArgomentoStringa(dim,argomento):	
 	if len(argomento) > dim :
 		print "FUNZIONE controllaArgomentoStringa-->Errore argomento troppo lungo.L'argomento viene troncato"
@@ -214,6 +209,7 @@ def controllaArgomentoStringa(dim,argomento):
 			i=i+1
 	return argomento
 
+#Funzione per la scrittura del log
 def scriviLog(self,Str):
 	logTime = time.localtime(time.time())
 	ora=time.strftime("%d/%m/%Y %H:%M:%S", logTime)
@@ -221,17 +217,17 @@ def scriviLog(self,Str):
 	self.info1.insert(END,Str)
 	self.info1.yview(END)
 
-
-
+#Funzione per la creazione della socket
 def creazioneSocket(IP,Porta):
-	#apertura socket	
 	peer_socket = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
 	peer_socket.connect((IP,int(Porta)))
 	return peer_socket	
-	
+
+#Funzione per la generazione del id del file di N caratteri
 def generaIdFile(N):
 	return ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(N)) 
-	
+
+#Funzione per il controllo se esiste un file
 def esisteFile(percorsoFile):
 	try:
 		fd=open(percorsoFile,"rb")		
@@ -239,18 +235,20 @@ def esisteFile(percorsoFile):
 	except:
 		print "Il file non esiste"
 		return 0
-				
+
+#Funzione che ritorna la dimensione del file
 def fileSize(percorso):
 	info = os.stat(percorso)
 	size = info[stat.ST_SIZE]
 	return size
 	
-#funzione che crea una cartella se non esiste
+#Funzione per la creazione di una cartella se non esiste
 def creaCartella(cartella):
     percorso = os.path.dirname(cartella)
     if not os.path.exists(percorso):
         os.makedirs(percorso)
-        
+
+#Funzione per la creazione di un file partendo dalle parti
 def creaFile(idFile,fileName):
 	chunkfiles = []
 	chunkfiles= os.listdir("./PartiTemp/"+idFile+"/")
@@ -262,45 +260,48 @@ def creaFile(idFile,fileName):
 		shutil.copyfileobj(open("./PartiTemp/"+idFile+"/"+f, 'rb'), destination)
 	destination.close()
 
-#######FUNZIONI CREA PACCHETTI########
-#login
+#Funzione per la creazione del pacchetto LOGI
 def logi(IP,PORTA):	
 	pacchetto="LOGI"+IP+PORTA
 	return pacchetto
 
+#Funzione per la creazione del pacchetto LOGO
 def logo(SessionID):
 	pacchetto="LOGO"+SessionID
 	return pacchetto
-	
+
+#Funzione per la creazione del pacchetto ADDR
 def addr(SessionID,idFile,lenFile,lenParti,Filename):
 	Filename=controllaArgomentoStringa(100,Filename)
 	pacchetto="ADDR"+SessionID+idFile+lenFile+lenParti+Filename
 	return pacchetto
-	
+
+#Funzione per la creazione del pacchetto LOOK
 def look(SessionID,Ricerca):
 	Ricerca=controllaArgomentoStringa(20,Ricerca)
 	pacchetto="LOOK"+SessionID+Ricerca
 	return pacchetto
 
+#Funzione per la creazione del pacchetto FCHU
 def fchu(SessionID,idFile):
 	pacchetto="FCHU"+SessionID+idFile
 	return pacchetto
-	
+
+#Funzione per la creazione del pacchetto RETP
 def retp(idFile,partNum):
 	pacchetto="RETP"+idFile+str(partNum).rjust(8,"0")
 	return pacchetto
-	
+
+#Funzione per la creazione del pacchetto RPAD	
 def rpad(SessionID,idFile,partNum):
 	pacchetto="RPAD"+SessionID+idFile+str(partNum).rjust(8,"0")
 	return pacchetto
 
 
-#########THREADS##########
-
+#Thread di ascolto generale
 class ThreadAscolto(threading.Thread):
 	ip=""
 	porta=""
-	maxconn=5	
 	socketACK=''
 	acceso=1
 	gestioneRisposte={}
@@ -308,42 +309,24 @@ class ThreadAscolto(threading.Thread):
 		threading.Thread.__init__(self)		
 		self.porta=Porta		
 	def run(self):
-		# Create the socket
-		try:
-			self.socketACK=socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-			self.socketACK.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-			self.socketACK.bind(("", int(self.porta)))
-		except:
-			print "Errore thread ascolto: Bind"
-			return False
-
-		# Listen on it
-		try:
-			self.socketACK.listen(self.maxconn)
-		except:
-			print "Errore thread ascolto: Listen"
-			return False			
+		self.socketACK=socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+		self.socketACK.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		self.socketACK.bind(("", int(self.porta)))
+		self.socketACK.listen(5)			
 
 		while self.acceso:
-			try:				
-				(conn, addr) = self.socketACK.accept()
-				cid=addr[0]			
-				self.gestioneRisposte[cid]=ThreadRisposte(cid, conn)
-				self.gestioneRisposte[cid].start()
-			except:
-				print "Errore thread ascolto: Accept"
-				return False
-					
+			(conn, addr) = self.socketACK.accept()
+			cid=addr[0]			
+			self.gestioneRisposte[cid]=ThreadRisposte(cid, conn)
+			self.gestioneRisposte[cid].start()
+	
+	#Funzione per la chiusura della socket
 	def closeSocketACK(self):
-		try:
-			self.acceso=0
-			self.socketACK.close()
-			return True
-		except:
-			print "Errore thread ascolto: Close"
-			return False
-			
-			
+		self.acceso=0
+		self.socketACK.close()
+		return True
+		
+#Thread di generazione ARET
 class ThreadRisposte(threading.Thread): 
 
 	id=''
@@ -370,27 +353,19 @@ class ThreadRisposte(threading.Thread):
 			sys.exit(1)					
 		if identificativo !="RETP":
 			print "ERRORE RISPOSTA IDENTIFICATIVO INIZIO THREAD ASCOLTO...",identificativo
-			#scriviLog(self,"ERRORE RISPOSTA IDENTIFICATIVO INIZIO THREAD ASCOLTO..."+identificativo)
 			self.socketACK.close()	
 			
 		randId=leggi(self.socketACK,16)
 		partNum=int(leggi(self.socketACK,8))
 		dimParte=int(dimParte)
-		#~ listaScaricati=[]
-		#~ listaScaricati=os.listdir("./fileScaricati/")
 		operazione=2  
 		for i in range(len(fileCaricati)):
 			if randId in fileCaricati[i]:  #è un mio file devo spezzettarlo
 				percorsoFile="./immagine/"+fileCaricati[i][1]
 				print "percorso ",percorsoFile
 				operazione=1
-				break
-			#~ else:   #è un file che ho scaricato e ho già le parti
-				#~ percorsoFile="./PartiTemp/"+randId+"/"+str(partNum)
-				#~ operazione=0
-				#~ #break		
+				break		
 				
-###################################################################
 		for i in range(len(listaScaricati)):
 			if randId in listaScaricati[i]:  #è un mio file devo spezzettarlo
 				percorsoFile="./PartiTemp/"+randId+"/"+str(partNum)
@@ -401,15 +376,13 @@ class ThreadRisposte(threading.Thread):
 		if operazione==2:  #il file non è ancora stato scaricato completamente--> le parti scaricate si trovano in parti temp
 			operazione=0
 			percorsoFile="./PartiTemp/"+randId+"/"+str(partNum)
-				
-####################################################################			
+						
 	
 				
 		if operazione==1:
 			#devo andare a leggere la parte giusta dal file
 			fd = open(percorsoFile,"rb")
 			print "read(1): ",fd.read(1)
-			#print "rgomento seek=",(partNum)*int(dimParte))
 			fd.seek(int(partNum)*int(dimParte))
 			parte=fd.read(dimParte)
 			
@@ -428,7 +401,6 @@ class ThreadRisposte(threading.Thread):
 			nChunk=str(nChunk).zfill(6)
 			print "nchunk: ",nChunk		
 			pacchetto="AREP"+nChunk
-			#print pacchetto
 			print "Trasferimento in corso.."
 			i=1
 			while i<= int(nChunk):
@@ -456,7 +428,6 @@ class ThreadRisposte(threading.Thread):
 			nChunk=str(nChunk).zfill(6)
 					
 			pacchetto="AREP"+nChunk
-			#print pacchetto
 			print "Trasferimento in corso.."
 			i=1
 			while i<= int(nChunk):
@@ -501,7 +472,7 @@ class ThreadAfch(threading.Thread):
 				scriviLog(self.selfGui,"Inviato "+pacchetto)
 			except:
 				print "Errore invio pacchetto FCHU"
-			identificativo=leggi(socket,4)#146B per ogni riga
+			identificativo=leggi(socket,4)
 			if not identificativo:
 				print "ERRORE RICEZIONE identificativo AFCH"
 				sys.exit(1)					
@@ -530,7 +501,7 @@ class ThreadAfch(threading.Thread):
 				newPartList=""
 				#trasformo in binario il numParti
 				for byte in range(len(partList)):
-					temp=ord(partList[byte]) #ho un intero
+					temp=ord(partList[byte])
 					temp = bin(temp)[2:].rjust(8, '0')
 					newPartList=newPartList+temp
 				print "newPartList",newPartList
@@ -539,13 +510,10 @@ class ThreadAfch(threading.Thread):
 					print "sono nel for-->blocco=",blocco
 					for bit in range(0,8):
 						
-						##########quiiiiiiiiii########
 						x=bit+8*blocco
 						print "x=",x
 						if newPartList[x]=="1" :
 							print "la partlist ha bit=1"
-							#print "indiceFile",self.indiceFile
-							 #print "filename ",fileTrovati[self.indiceFile].FILENAME
 							indice=((7+8*blocco)-x)+8*blocco
 							print "occorrenza ",fileTrovati[self.indiceFile].LISTAOCCORRENZE[indice].OCCORRENZE
 							fileTrovati[self.indiceFile].LISTAOCCORRENZE[indice].OCCORRENZE=int(fileTrovati[self.indiceFile].LISTAOCCORRENZE[indice].OCCORRENZE) +1
@@ -562,10 +530,9 @@ class ThreadAfch(threading.Thread):
 				try:
 					socket=creazioneSocket(ipTracker,portaTracker)
 					socket.send(pacchetto)
-					#scriviLog(self.selfGui,"Inviato "+pacchetto)
 				except:
 					print "Errore invio pacchetto FCHU 2"
-				identificativo=leggi(socket,4)#146B per ogni riga
+				identificativo=leggi(socket,4)
 				if not identificativo:
 					print "ERRORE RICEZIONE identificativo AFCH"
 					sys.exit(1)	
@@ -604,10 +571,6 @@ class ThreadAfch(threading.Thread):
 									indice=((7+8*blocco)-x)+8*blocco
 									fileTrovati[self.indiceFile].LISTAOCCORRENZE[indice].OCCORRENZE=int(fileTrovati[self.indiceFile].LISTAOCCORRENZE[indice].OCCORRENZE) +1
 									fileTrovati[self.indiceFile].LISTAOCCORRENZE[indice].LISTAIPPORTA.append(creaListaIpPorta(ipPeer, portaPeer))
-				#~ print "LISTA OCCORRENZE NEL DOWNLOAD"
-				#~ for i in range(0,int(self.numPezzi)):
-					#~ print "i",i,")",fileTrovati[self.indiceFile].LISTAOCCORRENZE[i].NUMPARTE, fileTrovati[self.indiceFile].LISTAOCCORRENZE[i].OCCORRENZE
-				#chiudo socket e la riapro all'inizio del while
 				socket.close()
 	
 				sleep(60)
@@ -633,15 +596,10 @@ class ThreadDownload(threading.Thread):
 
 	#devo inviare RETP, ricevere AREP e avvisare il Tracker inviando RPAD e ricevendo APAD
 	def run(self):	
-		#~ global ipTracker
-		#~ global portaTracker
 		global td
 		
-		
-		#threadFiniti=threadFiniti+1
 		print "Sono dentro al Thread self.indiceThread: ",self.indiceThread
 		 
-		#scriviLog(self.selfGui,"Partnum: "+str(self.partNum))
 
 		try:
 			pacchetto=retp(self.idFile,self.partNum)
@@ -656,7 +614,6 @@ class ThreadDownload(threading.Thread):
 			s.send(pacchetto)
 			print "pacchetto RETP inviato"
 			s.shutdown(1)
-			#scriviLog(self.selfGui,"INVIATO: "+pacchetto)
 		except:	
 			print "Errore socket RETP...riprovo"
 			try:
@@ -666,17 +623,13 @@ class ThreadDownload(threading.Thread):
 				s.send(pacchetto)
 				print "pacchetto RETP inviato secondo tentativo"
 				s.shutdown(1)
-				#scriviLog(self.selfGui,"INVIATO: "+pacchetto)
 			except:	
 				print "Errore socket RETP seconda volta"
-			#scriviLog(self.selfGui,"ERRORE INVIO: "+pacchetto)
-		#devo ricevere AREP
 		
-		identificativo=leggi(s,4)#146B per ogni riga
+		identificativo=leggi(s,4)
 		print "Leggo identificativo ",identificativo
 		if (not identificativo) or (identificativo!="AREP") :
 			print "ERRORE RICEZIONE identificativo AREP"
-			#scriviLog(self.selfGui,"ERRORE RICEZIONE identificativo AREP")
 			sys.exit(1)	
 
 		loc="./PartiTemp/"+self.idFile+"/"
@@ -685,9 +638,7 @@ class ThreadDownload(threading.Thread):
 
 		numChunk=int(leggi(s,6))	
 		conta=1	
-		#print " fuori while conta, nchunck",conta,numChunk
 		while conta <= numChunk:
-			#print " dentro while conta, nchunck",conta,numChunk
 			lenChunk=leggi(s,5)					
 			lenChunk=int(lenChunk)	
 			
@@ -702,38 +653,19 @@ class ThreadDownload(threading.Thread):
 		td.pop(self.indiceThread)
 		print "td dopo ",td
 		
-		#aggiorno la barra
-		#aggiornaBarra(self.partNum,self.bar)
-		#self.bar.update(self.partNum)
-		
-		#DEVO SEGNARMI CHE HO SCARICATO QUESTA PARTE (lo facciamo nel main)
-		
-		#DEVO AVVISARE IL TRACKER
-		pacchetto=rpad(self.sessionID,self.idFile,self.partNum) #####CONTROLLA DIMENSIONE PARTNUM!!!!
+		pacchetto=rpad(self.sessionID,self.idFile,self.partNum)
 		try:
 			s=creazioneSocket(ipTracker,portaTracker)
 			s.send(pacchetto)
-			#s.shutdown(1)
-			#scriviLog(self.selfGui,"INVIATO: "+pacchetto)
 		except:	
 			print "Errore socket RPAD"
-			#scriviLog(self.selfGui,"ERRORE INVIO: "+pacchetto)
-		#devo ricevere APAD
 		identificativo=leggi(s,4)#146B per ogni riga
 		if (not identificativo) or (identificativo!="APAD") :
 			print "ERRORE RICEZIONE identificativo APAD"
-			#scriviLog(self.selfGui,"ERRORE RICEZIONE identificativo APAD")
 			sys.exit(1)
 		
 		numPartiTot= leggi(s,8)
-		#scriviLog(self.selfGui,"Scaricata parte "+str(self.partNum)+" -> parti totali: "+numPartiTot)
-		s.close()	
-		
-		#AVVISO ME STESSO CHE HO SCARICATO UNA PARTE PER FARNE AVVIARE UN'ALTRA
-		#cioè tolgo il thread dall'array td
-		
-		#incremento il numero dei threadfiniti cioè il numero di parti realmente scaricate
-		#aggiornaThreadFiniti(threadFiniti)
+		s.close()
 		
 
 
@@ -747,7 +679,6 @@ class MiaApp:
 		
 		
 		finestra.title("bitTorrent")                  
-		#finestra.geometry("%dx%d+%d+%d" % (600, 300, 0, 0))
 		finestra.resizable(False, False)
 
 		self.frame1 = LabelFrame(self.finestra,text="Dati Login Tracker", width="250", height="150", bd="1", relief="ridge")
@@ -755,11 +686,9 @@ class MiaApp:
 		self.frame3 = LabelFrame(self.finestra,text="Ricerca File", width="250", height="35", bd="1", relief="ridge")
 		self.frame4 = LabelFrame(self.finestra,text="Download File", width="250", height="35", bd="1", relief="ridge")
 		self.frame5 = LabelFrame(self.finestra,text="Info", width="250", height="100", bd="1", relief="ridge")
-		#self.frame6 = LabelFrame(self.finestra,text="Tuoi dati", width="250", height="50", bd="1", relief="ridge")
 		
 
 		self.frame1.grid_propagate(0)
-		#self.frame2.grid_propagate(0)
 
 
 		self.frame1.grid(row=0, column=0, padx=10, pady=2, sticky="wesn",rowspan=3)
@@ -767,7 +696,6 @@ class MiaApp:
 		self.frame3.grid(row=1, column=1, padx=10, pady=2,sticky="wesn")
 		self.frame4.grid(row=2, column=1, padx=10, pady=2,sticky="wesn")
 		self.frame5.grid(row=3, column=0, padx=10, pady=10, columnspan=2,sticky="we")
-		#self.frame6.grid(row=4, column=0, padx=10, pady=10, columnspan=2,sticky="we")
 
 
 		#frame login
@@ -809,14 +737,7 @@ class MiaApp:
 		
 		#frame info
 		self.info1=Text(self.frame5, relief=SUNKEN, bd=2, setgrid=1, height=20,wrap='word', bg="black", fg="green");
-		#self.info1.grid(row=0, column=0,padx=5, pady=5, expand=X)
 		self.info1.pack(side=LEFT, expand=Y, fill=BOTH,padx=5, pady=5)
-		#self.bar1=Scrollbar(self.frame5);
-		#self.bar1.pack(side=LEFT, fill=Y)
-		#self.info1['yscrollcommand']=self.bar1.set; 
-		#self.bar1['command']=self.info1.yview
-
-		#frame tuoi dati
 		''''
 		
 		self.label3 = Label( self.frame6, text="Mio IP:" );
@@ -838,7 +759,7 @@ class MiaApp:
 		'''
 		
 	
-	# BOTTONE LOGIN -------------------------------------------------------------------------------------------
+	#Bottone login
 	def click_bottone1(self):
 		global mioIp
 		global miaPorta
@@ -864,28 +785,21 @@ class MiaApp:
 				scriviLog(self,"Inviato LOGI:  "+pacchetto)
 			except:
 				scriviLog(self,"Errore Invio pacchetto LOGI")
-				#print "Errore Invio pacchetto LOGI"
 			
 			#ricevo ALGI			
 			risposta=leggi(s,20) 
 			if not risposta:
-				#print "ERRORE RICEZIONE PACCHETTO ALGI: nessuna risposta"
 				scriviLog(self,"ERRORE RICEZIONE PACCHETTO ALGI: nessuna risposta")
 				sys.exit(1)
 			identificativo=risposta[0:4]
 			if identificativo !="ALGI":
-				#print "ERRORE IDENTIFICATIVO: no ALGI"
 				scriviLog(self,"ERRORE IDENTIFICATIVO: no ALGI")
 				sys.exit(1)
 			sessionID=risposta[4:len(risposta)]
 			#se sono gia loggato
 			if sessionID=="0000000000000000":
-				#print "SessionID già presente"
 				scriviLog(self,"SessionID già presente")
-				#sys.exit(1)
-				##########SESSIONID######
 				sessionID="EM3M3OSBOGT1OP4I"
-			#print "SEI LOGGATO A: ",ipTracker," ",portaTracker
 			scriviLog(self,"SEI LOGGATO A: "+ipTracker+" "+portaTracker)
 			s.close()
 			
@@ -896,7 +810,7 @@ class MiaApp:
 			self.info1.insert(INSERT,"Inserisci IP e PORTA !!!\n" )
 			
 			
-	# BOTTONE LOGOUT------------------------------------------------------------------------------------------
+	#Bottone logout
 	def click_bottone2(self):
 		global mioIp
 		global miaPorta
@@ -916,7 +830,7 @@ class MiaApp:
 
 		
 		#LOGOUT
-		identificativo=leggi(s,4)#146B per ogni riga
+		identificativo=leggi(s,4)
 		
 		if identificativo =="NLOG":		
 			partDown=leggi(s,10)
@@ -938,7 +852,7 @@ class MiaApp:
 		s.close()
 		
 	
-	# BOTTONE AGGIUNGI ------------------------------------------------------------------------------------------
+	#Bottone aggiungi
 	def click_bottone3(self):
 		global mioIp
 		global miaPorta
@@ -963,7 +877,6 @@ class MiaApp:
 			print "ip porta tracker:", ipTracker, portaTracker
 			dimFile=fileSize(percorsoFilename)
 			dimFile=str(dimFile).zfill(10)
-			#dimFile=controllaArgomentoNumero(10,dimFile)
 			print "DimFile:", dimFile
 			pacchetto=addr(sessionID,idFile,dimFile,str(dimParte),filename) 
 			print "pacchetto", pacchetto
@@ -971,7 +884,7 @@ class MiaApp:
 			scriviLog(self,"INVIATO - "+pacchetto)
 			print"AGGIUNTO pacchetto:",pacchetto			
 			
-			identificativo=leggi(s,4)#146B per ogni riga
+			identificativo=leggi(s,4)
 			if identificativo !="AADR":
 				print "ERRORE IDENTIFICATIVO: no AADR"
 				scriviLog(self,"ERRORE IDENTIFICATIVO: no AADR")
@@ -982,15 +895,11 @@ class MiaApp:
 			fileCaricati.append([idFile,filename,numPartiLetto])
 			s.close()
 			print fileCaricati
-			#~ except:
-				#~ 
-				#~ print "Errore in Aggiunta file"
-				#~ scriviLog(self,"Errore in Aggiunta file")
 		else:
 			scriviLog(self,"File non scelto")
 			
 	
-	# BOTTONE CERCA ------------------------------------------------------------------------------------------
+	#Bottone cerca
 	def click_bottone4(self):
 		global mioIp
 		global miaPorta
@@ -1046,7 +955,7 @@ class MiaApp:
 			t=ThreadAfch(sessionID, fileTrovati[i].RANDID, "Ricerca", numParti, i,self,numPezzi)
 			t.start()
 		
-	# BOTTONE DOWNLOAD ------------------------------------------------------------------------------------------
+	#Bottone download
 	def click_bottone5(self):
 		global mioIp
 		global miaPorta
@@ -1062,53 +971,37 @@ class MiaApp:
 		indiceThread=0
 		threadFiniti=0
 		
-		#numParti=numero dei byte nella partlist
 		numParti=int(ceil((int(fileTrovati[iFile].LENFILE)/int(fileTrovati[iFile].LENPARTI))/8.0))
 		numPezzi=int(ceil(int(fileTrovati[iFile].LENFILE)/float(fileTrovati[iFile].LENPARTI)))
-		#print "numpezzi ", numPezzi
-		#avvio l'aggiornamento della tabella del file voluto
 		t=ThreadAfch(sessionID, fileTrovati[iFile].RANDID, "Download", numParti, iFile,self,numPezzi)
 		t.start()
 		
 		
 		
-		#bar = PB(lunghezza,larghezza, titolo, numPezzi)
 		print "creo la barra: numpezzi: ",numPezzi
 		bar = PB(600, 25, fileTrovati[iFile].FILENAME,numPezzi)
 		#apro la barra
 		bar.open()
-		#print "Threadfiniti , numPezzi", threadFiniti,numPezzi
-		#td={}
 		tFiniti=0
 		while 1:
 			if tFiniti<numPezzi:
-				#print "ThreadFiniti<",tFiniti,"< numPezzi: ",numPezzi
 				l=fileTrovati[iFile].LISTAOCCORRENZE
-				occOrd=sorted(l, key=attrgetter('OCCORRENZE'))
-				#print "primo if-->Numero thread attivi--> len(td): ",len(td)				
+				occOrd=sorted(l, key=attrgetter('OCCORRENZE'))			
 				if len(td)<partiCont:
-					for i in range(0,len(occOrd)): #se non ci sono devo crearne, scorro la lista occord
-						#print "for-->i: ",i
-						#print "secondo if-->Numero thread attivi--> len(td): ",len(td)		
+					for i in range(0,len(occOrd)): #se non ci sono devo crearne, scorro la lista occo
 						if len(td)<partiCont: #controllo che non ci siano gia partiCont threads attivi							
 							#controllo che la parte con occorrenza minore non sia gia in download/ o scaricata
-							#print "len(occOrd):",len(occOrd)
 							if occOrd[i].OCCORRENZE != "0":
 								
 								if occOrd[i].NUMPARTE not in partiScaricate: #se non c'è da 1 e la scarico
 									
 									indiceScelto=randint(0,len(occOrd[i].LISTAIPPORTA)-1)
-									#print "indice scelto:", indiceScelto 
 									ipScelto=occOrd[i].LISTAIPPORTA[indiceScelto].IP
 									portaScelta=occOrd[i].LISTAIPPORTA[indiceScelto].PORTA							
 									print "ip:", ipScelto,"porta:", portaScelta,"ip:", occOrd[i].NUMPARTE 
 									td[indiceThread]=ThreadDownload(fileTrovati[iFile].RANDID,occOrd[i].NUMPARTE,ipScelto,portaScelta,sessionID,indiceThread,bar,self)
 									td[indiceThread].start()
-									#td[indiceThread].join()
 									tFiniti=tFiniti+1
-									#print "tFiniti: ",tFiniti
-									#QUIIIIIIIIIIIIIII
-									#raw_input("premi")
 									sleep(0.1)
 									bar.update(occOrd[i].NUMPARTE,ipScelto)
 									partiScaricate.append(occOrd[i].NUMPARTE)
@@ -1124,39 +1017,6 @@ class MiaApp:
 		t.stopAggiornamento()
 					
 		
-		#se il numero delle parti scaricate è diverso dal numero totale di parti del file -> avvio thread				
-		#~ while threadFiniti < numPezzi:
-			#~ 
-			#~ print "Threadfiniti", threadFiniti
-			#~ print "NumPezzi ",numPezzi
-					#~ 
-			#~ l=fileTrovati[iFile].LISTAOCCORRENZE
-			#~ occOrd=sorted(l, key=attrgetter('OCCORRENZE'))
-			#~ 
-			#~ print "len(td), partiCont",len(td),partiCont
-			#~ if len(td)<partiCont: #controllo che non ci siano gia partiCont threads attivi
-				#~ for i in range(0,len(occOrd)): #se non ci sono devo crearne, scorro la lista occord
-					#~ #controllo che la parte con occorrenza minore non sia gia in download/ o scaricata
-					#~ print "len(occOrd):",len(occOrd)
-					#~ if occOrd[i].OCCORRENZE != "0":
-						#~ if occOrd[i].NUMPARTE not in partiScaricate: #se non c'è da 1 e la scarico
-							#~ 
-							#~ indiceScelto=randint(0,len(occOrd[i].LISTAIPPORTA)-1)
-							#~ print "indice scelto:", indiceScelto 
-							#~ ipScelto=occOrd[i].LISTAIPPORTA[indiceScelto].IP
-							#~ portaScelta=occOrd[i].LISTAIPPORTA[indiceScelto].PORTA							
-						#~ 
-							#~ td[indiceThread]=ThreadDownload(fileTrovati[iFile].RANDID,occOrd[i].NUMPARTE,ipScelto,portaScelta,sessionID,indiceThread,bar,self)
-							#~ td[indiceThread].start()
-							#~ #QUIIIIIIIIIIIIIII
-							#~ #raw_input("premi")
-							#~ sleep(0.1)
-							#~ bar.update(occOrd[i].NUMPARTE)
-							#~ partiScaricate.append(occOrd[i].NUMPARTE)
-							#~ indiceThread=indiceThread+1
-					#~ if len(td)==partiCont:
-						#~ break
-		#~ t.stopAggiornamento()
 		scriviLog(self,"File in stato di creazione")
 		while len(td)!=0:	
 			sleep(0.1)					
@@ -1167,31 +1027,6 @@ class MiaApp:
 		print "File ",fileTrovati[iFile].FILENAME," scaricato."
 		scriviLog(self,"File "+fileTrovati[iFile].FILENAME+" scaricato.")
 		listaScaricati.append([fileTrovati[iFile].RANDID,fileTrovati[iFile].FILENAME])
-		
-	
-	# BOTTONE CAMBIA INFO ------------------------------------------------------------------------------------------
-	def click_bottone6(self):
-		global mioIp
-		global miaPorta
-
-		if self.bottone6["text"]=="Cambia":
-			self.bottone6.configure(text="OK")
-			self.entry6.configure(state=NORMAL)
-			self.entry7.configure(state=NORMAL)
-			self.entry6.delete(0, END)
-			self.entry7.delete(0, END)
-		elif self.bottone6["text"]=="OK":
-			self.bottone6.configure(text="Cambia")
-			mioIP=creaIP(self.entry6.get())
-			miaPorta=controllaArgomentoNumero(5,self.entry7.get())
-			
-			self.entry6.delete(0, END)
-			self.entry6.insert(0, mioIP)
-			self.entry7.delete(0, END)
-			self.entry7.insert(0, miaPorta)
-		
-			self.entry6.configure(state="readonly")
-			self.entry7.configure(state="readonly")
 			
 			
 			

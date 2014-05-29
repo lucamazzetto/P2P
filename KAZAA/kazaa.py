@@ -1,41 +1,48 @@
-#! /usr/bin/env python
+#KAZAA GRUPPO 03
 # -*- coding: UTF-8 -*-
-#progetto3
 
-#io  			fd00:0000:0000:0000:7ed1:c3ff:fe76:362a
-#guerra 		fd00:0000:0000:0000:22c9:d0ff:fe47:70a3
-#mazzetto		fd00:0000:0000:0000:26fd:52ff:fe7a:6c5a
+#guerra 	fd00:0000:0000:0000:22c9:d0ff:fe47:70a3
+#mazzetto	fd00:0000:0000:0000:8896:7854:b792:1bd1
+#natali 	fd00:0000:0000:0000:7ed1:c3ff:fe76:362a
 
-import socket,stat,sys,hashlib,os,threading,thread,time,re
-from random import * 
-import random
-import string 
+import socket    		#libreria per socket
+import string           #manipolazione di stringhe
+import thread           #libreria per thread
+import sys              #libreria per cartelle
+import re               #libreria per espressioni
+import stat 			#libreria per operare con i path
+import hashlib 			#libreria per md5
+import os				#libreria per operare con OS
+import threading		#libreria per threading
+import thread 			#libreria per threading
+import time 			#libreria per timeout
+import random 			#libreria per generazione numeri casuali
+
+
 mioIP="fd00:0000:0000:0000:22c9:d0ff:fe47:70a3"
 PortaQuery="03000"
-#PortaQuery="3000"
-gestioneRisposte={} #oggetto della classe threadRisposte
+gestioneRisposte={}
 gestioneRisposte20s={}
-listaVicini={} #lista degli ip e porte dei vicini
-vicini={} #thread per fare query ai vicini
-
-parametri={}
+listaVicini={} 									#Lista degli ip e porta dei vicini
+vicini={} 										#Thread per fare query ai vicini
+parametri={}									#Lista parametri per il download
 indiceListaSuperPeer=0
-listaSuperPeer={} #lista dei super peer ricevuti dal pacchhetto asup
-fileCondivisi={}
-fileTrovati={}
+listaSuperPeer={} 								#Lista dei super peer ricevuti dal pacchetto ASUP
+fileCondivisi={}								#Lista file condivisi
+fileTrovati={}									#Lista file trovati
 spegniRicerca=0
-superPeer=0 #variabile booleana per far capire nel thread ricerca se si è peer o super peer
-listaPKTID={}  #lista dei PKTID dei quer che mi arrivano e ritrasmetto
+superPeer=0 									#0=peer,1=superpeer									
+listaPKTID={}  									#Lista dei PKTID dei QUER che mi arrivano e ritrasmetto
 listaPKTIDquer={}
-listaPKTIDsupe={} #lista che salva i PKTID di tutti i pacchetti SUPE ricevuti
-listaPKTIDquerFind={} #lista dei PKTID dei pacchetti QUER il superpeer trasmette dopo una FIND
-listaPKTIDasup={}#lista dei pktid delle risposte asup
-sessionidPKTID={}#lista che ha come indice il sessionId e ad ognuno è associato il pktid del pachetto quer che genera il superpeer quando arriva una find
-salvataggio={} #lista dei parametri di afin
-indice=0 #indice di "salvataggio" per il pacchetto afin
-listaLoggati={} #lista dei peer che si sono loggati da noi
-listaFile=[]# lista della tabella ADFF--> istanza della classe StrutturaFile
-listaRispAque=[]#lista che contiene le risposte Aque
+listaPKTIDsupe={} 								#Lista che salva i PKTID di tutti i pacchetti SUPE ricevuti
+listaPKTIDquerFind={} 							#Lista dei PKTID dei pacchetti QUER il superpeer trasmette dopo una FIND
+listaPKTIDasup={}								#Lista dei pktid delle risposte asup
+sessionidPKTID={}								#Lista che ha come indice il sessionId e ad ognuno è associato il pktid del pachetto QUER che genera il superpeer quando arriva una FIND
+salvataggio={} 									#Lista dei parametri di AFIN
+indice=0 										#Indice di "salvataggio" per il pacchetto AFIN
+listaLoggati={} 								#Lista dei peer che si sono loggati da noi
+listaFile=[]									#Lista della tabella ADFF--> istanza della classe StrutturaFile
+listaRispAque=[]								#Lista che contiene le risposte Aque
 ricercheSuperPeer=[] 
 
 class creaLISTAIPPORTA:
@@ -66,7 +73,8 @@ class StrutturaFile:
 		self.FILENAME=FILENAME
 		self.FILEMD5=FILEMD5
 		self.SESSIONID.append(SESSIONID)
-#CLASSE che contiene i filemd5 e filename che condividiamo
+
+#Classe per salvare md5 e percorso dei file che condividiamo
 class FileCondivisi:
 	PERCORSO=''
 	FILEMD5=''
@@ -74,47 +82,45 @@ class FileCondivisi:
 		self.PERCORSO=PERCORSO
 		self.FILEMD5=FILEMD5
 				
-#classe che contiene ip e porta dei vicini
+#Classe con contiene i vicini con loro IPv6 e porta
 class Vicini:
 	IP=''
 	PORTA=''
-	# The constructor
 	def __init__(self,IP, PORTA):		
 		self.IP=IP
 		self.PORTA=PORTA
 		
-#-------------------------------------------------------------------------------------------------------------
-
-#CLASSE SALVA PARAMETRI: MEMORIZZA I PARAMETRI DI RITORNO DALLA RICERCA PER POTERLI UTILIZZARE NEL DOWLOAD
+#Classe per poter salvare i dati che mi ritornano con la ricerca
 class SalvaParametri:	
 	IP=''
 	PORTA=''
 	FILEMD5=''
 	FILENAME=''
 	PKTID=''
-	# The constructor
 	def __init__(self,IP, PORTA, FILEMD5,FILENAME,PKTID):		
 		self.IP=IP
 		self.PORTA=PORTA
 		self.FILEMD5=FILEMD5
 		self.FILENAME=FILENAME
 		self.PKTID=PKTID
-#--------------------------------------------------------------------------------------	
-#FUNZIONI		
-class Loggati: #tabella che salva il sessionId, ip e porta dei peer che si loggano a noi quando siamo super peer
-	#SESSIONID=''
+
+#Classe per salvare sessionId,ip e porta dei peer quando si loggano a noi (siamo superpeer)	
+class Loggati:
+
 	IP=''
 	PORTA=''
-	# The constructor
-	def __init__(self,IP, PORTA):		
-		#self.SESSIONID=SESSIONID
+	def __init__(self,IP, PORTA):
 		self.IP=IP
 		self.PORTA=PORTA
+
+#Funzione per leggere dato da socket
 def leggi(s,dim):
 	dato=s.recv(dim)
 	while len(dato)<dim:
 		dato=dato+s.recv(1)
 	return dato
+
+#Funzione per la creazione dell'IPv6 per esteso a partire da uno contratto
 def creaIP(ip):
 	l=ip.split(":")
 	diff=8-len(l)
@@ -130,11 +136,11 @@ def creaIP(ip):
 			k=k+1
 		else:
 			i=i+1
-			k=k+diff+1
-	#print v		
+			k=k+diff+1		
 	return str(v[0])+":"+str(v[1])+":"+str(v[2])+":"+str(v[3])+":"+str(v[4])+":"+str(v[5])+":"+str(v[6])+":"+str(v[7])
+
+#Funzione per l'eliminazione degli asterischi dalla stringa di ricerca
 def elimina_asterischi(stringa):
-        
         ritorno = ""
         ritorno2 = ""
         lettera = False
@@ -144,27 +150,29 @@ def elimina_asterischi(stringa):
                 ritorno = ritorno + stringa[i]
                 lettera = True
        
-        ritorno = ritorno[::-1]
+        ritorno = ritorno[::-1]									#rovescio la stringa per cancellare quelli a destra
     
         for i in range (0,len(ritorno)):
             if(ritorno[i]!="*" or lettera2==True):
                 ritorno2=ritorno2+ritorno[i]
                 lettera2 = True
     
-        return ritorno2[::-1]
+        return ritorno2[::-1]									#ri-rovescio la stringa per farla tornare giusta
 	
 	
-#stampa una lista
+#Funzione per la stampa di una lista
 def stampa(l): 
 	for elemento in l.keys():
 		print elemento,l[elemento]
-		
+
+#Funzione per la stampa della lista dei vicini
 def stampaVicini(l):
 	i=0
 	while i<len(l):
 		print "IP vicino: ",l[i].IP,"PORTA vicino: ", l[i].PORTA
 		i=i+1
-#Funzione scrivi file di log
+
+#Funzione per la scrittura del file di log
 def scriviLog(Str):
 	logTime = time.localtime(time.time())
 	ora=time.strftime("%d/%m/%Y %H:%M:%S", logTime)
@@ -172,39 +180,39 @@ def scriviLog(Str):
 	flog.write (ora+"    ----     "+Str+"\n")
 	flog.close()
 
-#cancella pacchetti scaduti mettendo a 0 il tempo e nessun valore al pktid	
+#Funzione per la cancellazione dei pacchetti scaduti
 def cancellaPacchettiScaduti(lista,tempo,Tmax):
 	for i in lista.keys():
-			if tempo-lista[i] >= Tmax:
+			if tempo-lista[i] >= Tmax:							#differenza tra tempo attuale e stamp di quando ho ricevuto il pacchetto
 				del lista[i]		
 	
+#Funzione per la cancellazione di un vicino dato l'indice nella lista
 def cancellaVicini(valore_da_cancellare,lista):
 	i=valore_da_cancellare
-	while(i<len(lista)-1):
-		k=i+1
-		lista[i]=lista[k]
-		i=i+1
-		
-	del lista[len(lista)-1]
-	return lista	
-#Funzione ricerca file
+	while(i<len(lista)-1):							#se non è l'ultimo scorro la lista sovrascrivendo quello che voglio cancellare
+		lista[i]=lista[i+1]
+		i=i+1	
+	del lista[len(lista)-1]							#cancello il vicino dalla lista se è l'ultimo o l'ultimo della lista se ho fatto lo scorrimento
+	return lista
+
+#Funzione per la ricerca del file
 def cercaFile(Ricerca):
-	lista=(os.listdir('./immagine'))
-	Ricerca=Ricerca.strip()
-	p = re.compile(Ricerca,re.IGNORECASE)
-	file={}
+	lista=(os.listdir('./immagine'))				#ottengo la lista dei file in ./immagine
+	Ricerca=Ricerca.strip()							#tolgo spazi prima e dopo la stringa
+	p = re.compile(Ricerca,re.IGNORECASE)			#definisco cosa devo cercare e in che modo
+	file={}											
 	i=0
 	k=0
-	while i<len(lista) :
-		m = p.search(lista[i]) 
-		if m:
+	while i<len(lista) :							#ciclo sul contenuto di ./immagine per la ricerca della stringa di ricerca
+		m = p.search(lista[i]) 						
+		if m:										#se ho trovato qualcosa salvo il nome in file
 			file[k]=lista[i]
 			k=k+1		
 		i=i+1
-	return file
-#funzione che salva tutti i filename e i filemd5 che condividiamo
+	return file 									#ritorno la lista di quello che ho trovato
+
+#Funzione che salva tutti gli md5 e il percorso dei file che condividiamo (che sono in ./immagine)
 def SalvaFile():
-	
 	lista=(os.listdir('./immagine')	)
 	i=0
 	while i <len(lista):
@@ -212,31 +220,30 @@ def SalvaFile():
 		filemd5=creazioneFilemd5(percorso)
 		fileCondivisi[i]=FileCondivisi(percorso,filemd5)
 		i=i+1
-#FUNZIONE confronta file md5: quando sono uguali restituisco il percorso
+
+#Funzione che cerca un md5 nella lista dei file e se lo trova ritorna il percorso
 def trovaPercorso(lista,filemd5):
 		i=0
 		while i<len(lista):
 			if lista[i].FILEMD5==filemd5:
-				return lista[i].PERCORSO				
+				return lista[i].PERCORSO
 				break
 			else :
 				i=i+1
 		print "File md5 non compatibile..."
 		exit()	
 
+#Funzione per il controllo dato IP e porta si un peer se è un vicino (0 se vicino,1 se non vicino)
 def ricercaVicini(IP,Porta,lista):
 	i=0
 	while i < len(lista):
-		if lista[i].IP==IP and lista[i].PORTA==Porta:  #se l'ip e la porta sono presenti
+		if lista[i].IP==IP and lista[i].PORTA==Porta:
 			return 0
 		i=i+1
 	return 1		
 	
-#CONTROLLO DIMENSIONE DELL'ARGOMENTO DEL PACCHETTO PACCHETTO
-def controllaArgomentoNumero(dim,argomento): #aggiungo 0 davanti al numero se è troppo corto
-	#if len(argomento) > dim :
-		#print "FUNZIONE controllaArgomentoNumero-->Errore argomento troppo lungo.L'argomento viene troncato"
-		#argomento=argomento[0:dim]
+#Controllo la dimensione di un numero e la riempo di 0 fino a dim
+def controllaArgomentoNumero(dim,argomento):
 	if len(argomento) < dim :
 		differenza=dim-len(argomento)
 		i=0
@@ -244,7 +251,8 @@ def controllaArgomentoNumero(dim,argomento): #aggiungo 0 davanti al numero se è
 			argomento="0"+argomento
 			i=i+1
 	return argomento
-	
+
+#Funzione per il controllo se una stringa rispetta una lunghezza e per il fill con ' ' per farla diventare di lunghezza dim
 def controllaArgomentoStringa(dim,argomento):	
 	if len(argomento) > dim :
 		print "FUNZIONE controllaArgomentoStringa-->Errore argomento troppo lungo.L'argomento viene troncato"
@@ -256,11 +264,14 @@ def controllaArgomentoStringa(dim,argomento):
 			argomento=argomento+" "
 			i=i+1
 	return argomento
+
+#Funzione per il fill con 0 del TTL
 def controllaDimensione(TTL):
 	if len(TTL)<2:
 		TTL='0'+TTL
 	return TTL
 
+#Funzione per il controllo dell'md5 se è 16B
 def controlla16B(dim,argomento):
 	if len(argomento) > dim :
 		print "FUNZIONE controlla16B-->Errore argomento troppo lungo."
@@ -269,12 +280,14 @@ def controlla16B(dim,argomento):
 		print "Errore argomento troppo corto."
 		exit()
 	return argomento
-	
+
+#Funzione per la creazione dell'md5 di un file dato il percorso	
 def creazioneFilemd5(percorsoFile):
 	Filemd5=hashlib.md5(open(percorsoFile,"rb").read()).digest()
 	Filemd5=controlla16B(16,Filemd5)
 	return Filemd5
-	
+
+#Funzione per il controllo se un file esiste
 def esisteFile(percorsoFile):
 	try:
 		fd=open(percorsoFile,"rb")		
@@ -283,81 +296,91 @@ def esisteFile(percorsoFile):
 		print "Il file non esiste"
 		return 0
 
-#-------------------------------------------------------------------
+#Funzione per la generazione del PKTID di N caratteri
 def generaPKTID(N):
-	return ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(N)) 	
+	return ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(N)) 	#definisco una scelta random di N elementi tra maiuscole e numeri	
 	
-#------------------------------------------------------------------
+#Funzione per la creazione della socket
 def creazioneSocket(IP,Porta):
-	#apertura socket	
 	peer_socket = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
 	peer_socket.connect((IP,int(Porta)))
 	return peer_socket
-	
-def query(PKTID,mioIP,PortaQuery,TTL,Ricerca):	
+
+#Funzione per la creazione del pacchetto QUER
+def query(PKTID,mioIP,PortaQuery,TTL,Ricerca):
 	Ricerca=controllaArgomentoStringa(20,Ricerca)
 	pacchetto="QUER"+PKTID+mioIP+PortaQuery+TTL+Ricerca
 	return pacchetto
 
-
+#Funzione per la creazione del pacchetto SUPE
 def supe(PKTID,IP,PortaQuery,TTL):	
 	pacchetto="SUPE"+PKTID+IP+PortaQuery+TTL
 	return pacchetto
-	
+
+#Funzione per la creazione del pacchetto ASUP
 def asup(PKTID,IP,PortaQuery):	
 	pacchetto="ASUP"+PKTID+IP+PortaQuery
 	return pacchetto
-	
+
+#Funzione per la creazione del pacchetto AQUE
 def aque(PKTID,IP,P,Filemd5,Filename):	
 	pacchetto="AQUE"+PKTID+IP+P+Filemd5+Filename	
 	return pacchetto
-	
-def download(IPP2P,PortaP2P,Filemd5):  #invio la richiesta per scaricare un file
-	#apertura socket con altro peer	
+
+#Funzione per la richiesta di download RETR con creazione della socket peer-peer e invio 	
+def download(IPP2P,PortaP2P,Filemd5):
 	socketD=creazioneSocket(IPP2P,PortaP2P)	
 	Filemd5=controlla16B(16,Filemd5)
 	pacchetto="RETR"+Filemd5
-	#invio pacchetto al peer
 	socketD.send(pacchetto)
 	return 	socketD
-	
-def logi(peer_socket,IP,PORTA):	#login
+
+#Funzione per la creazione del pacchetto LOGI
+def logi(peer_socket,IP,PORTA):
 	pacchetto="LOGI"+IP+PORTA
 	peer_socket.send(pacchetto)
 	return peer_socket	
 	
-	#LOGOUT:
+#Funzione per la creazione del pacchetto ALGI
 def algi(peer_socket,SessionID):
 	SessionID=controlla16B(16,SessionID)
 	pacchetto="ALGI"+SessionID
 	peer_socket.send(pacchetto)
+
+#Funzione per la creazione del pacchetto LOGO
 def logo(peer_socket,SessionID):
 	SessionID=controlla16B(16,SessionID)
 	pacchetto="LOGO"+SessionID
 	peer_socket.send(pacchetto)
-	
+
+#Funzione per la creazione del pacchetto ALGO
 def algo(peer_socket,n):
 	pacchetto="ALGO"+n
 	peer_socket.send(pacchetto)
+
+#Funzione per la creazione del pacchetto ADFF
 def adff(peer_socket,SessionID,Filemd5,Filename): #aggiunta file
 	Filemd5=controlla16B(16,Filemd5)
 	Filename=controllaArgomentoStringa(100,Filename)
 	SessionID=controlla16B(16,SessionID)
 	pacchetto="ADFF"+SessionID+Filemd5+Filename
 	peer_socket.send(pacchetto)
-	
+
+#Funzione per la creazione del pacchetto DEFF
 def deff(peer_socket,SessionID,Filemd5): #rimozione file
 	Filemd5=controlla16B(16,Filemd5)
 	SessionID=controlla16B(16,SessionID)
 	pacchetto="DEFF"+SessionID+Filemd5
 	peer_socket.send(pacchetto)
-	
+
+#Funzione per la creazione del pacchetto FIND
 def find(peer_socket,SessionID,Ricerca): #ricerca rivolta dal peer al super peer
 	SessionID=controlla16B(16,SessionID)
 	Ricerca=controllaArgomentoStringa(20,Ricerca)
 	pacchetto="FIND"+SessionID+Ricerca
 	peer_socket.send(pacchetto)
-	
+
+#Funzione per la creazione del pacchetto RETR
 def retr(IPP2P,PortaP2P,Filemd5):	
 	peer_socketPeer = creazioneSocket(IPP2P,PortaP2P)
 	Filemd5=controlla16B(16,Filemd5)
@@ -365,124 +388,96 @@ def retr(IPP2P,PortaP2P,Filemd5):
 	peer_socketPeer.send(pacchetto)
 	return 	peer_socketPeer
 
+#Thread per l'invio dei pacchetti QUER ai vicini
+class threadRicerca(threading.Thread):
 
-#------------------------------------------------------------------
-
-#-------------------------------------------------------------------------------------------
-class threadRicerca(threading.Thread): #thread che manda pacchetto query a tutti i vicini
-	# The IP address
 	ip=""
 	porta=""
 	socketQuery=None
 	pacchetto=''
 	i=''
-	# The client threads
-	clients={}	
+	clients={}
+
 	def __init__(self,IP,Porta,pacchetto,i):
 		threading.Thread.__init__(self)
 		self.ip=IP
 		self.porta=Porta
 		self.pacchetto=pacchetto	
 		self.i=i
-		#self.socketQuery=socket
 	
 	def run(self):
-		# Create the socket
 		global listaVicini
-		try:			
+		try:																			#Creazione socket per QUER
 			self.socketQuery=socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
 			self.socketQuery.connect((self.ip, int(self.porta)))
-			#print ('la socket è creata.')
 		except:
 			self.log("Il vicino noto "+self.ip+" si è scollegato...Verrà cancellato")
-			#listaVicini=cancellaVicini(self.i,listaVicini)
+			listaVicini=cancellaVicini(self.i,listaVicini)
 
 			return False	
 		self.socketQuery.send(self.pacchetto)
 		self.socketQuery.close()
-	# Log the errors
+
 	def log(self, msg):
 		print(msg)
 
-#--------------------------------------------------------------------------------------
-#thread che resta sempre in ascolto per 300sec--> ad ogni richiesta ricevuta crea un thread threadRisposte
+#Thread che resta in ascolto per 150ms, ad ogni richiesta crea un threadRichieste
 class ThreadAscolto(threading.Thread):
-	
+
 	ip=""
 	porta=""
-	maxconn=5	
 	socketACK=''
 	acceso=1
 	def __init__(self,Porta):
 		threading.Thread.__init__(self)		
 		self.porta=Porta		
 	def run(self):
-		# Create the socket
-		try:
+		try:																			#Creazione socket per ascolto
 			self.socketACK=socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
 			self.socketACK.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-			self.socketACK.bind(("", int(self.porta)))
-			#print ('la socket è creata.')
+			self.socketACK.bind((mioIP, int(self.porta)))
+			self.socketACK.listen(5)
 		except:
-			self.log('Cannot bind the socketACK.')
-			return False
-
-		# Listen on it
-		try:
-			self.socketACK.listen(self.maxconn)
-			#print ('la socket è in ascolto.')
-		except:
-			self.log('Cannot listen on the socket.')
+			self.log('Impossibile utilizzare la socket')
 			return False			
 
-		# Share it with the class
 		self.socketACK.settimeout(1000)
 		while self.acceso:
-			
 			try:				
 				(conn, addr) = self.socketACK.accept()
-				cid=addr[0]
-				#print "cid: ",cid									
-				gestioneRisposte[cid]=threadRisposte(cid, conn,self)
+				cid=addr[0]								
+				gestioneRisposte[cid]=threadRisposte(cid, conn,self)					#Delego a threadRisposte
 				gestioneRisposte[cid].start()
 			except socket.timeout:
 				print "Tempo scaduto.....cancellazione pacchetti in corso.."	
-				tempo=time.time()
-				cancellaPacchettiScaduti(listaPKTID,tempo,5000) #lista pktid:pktid dei quer che ritrasmetto
-				cancellaPacchettiScaduti(listaPKTIDsupe,tempo,5000)#lista pktidsupe:pktid dei supe che ritrasmetto
-				#cancellaPacchettiScaduti(PKTIDmio,tempo,20)
-				print				
-				print 
-				#cancellaPacchettiScaduti(PKTIDmio,tempo)
+				tempo=time.time()														#Salvo time stamp per controllare quali eliminare
+				cancellaPacchettiScaduti(listaPKTID,tempo,5000) 						#Lista pktid:pktid dei quer che ritrasmetto
+				cancellaPacchettiScaduti(listaPKTIDsupe,tempo,5000)						#Lista pktidsupe:pktid dei supe che ritrasmetto
 				self.socketACK.settimeout(1000)
-				#client_socket.send("tempo scaduto")		
+
 	def log(self, msg):
 		print(msg)
+
+	#Funzione per la chiusura della socket
 	def closeSocketACK(self):
-		try:
-			self.acceso=0
-			self.socketACK.close()
-			return True
-		except:
-			self.log('Cannot close socketACK')
-			return False
+		self.socketACK.close()
+		return True
 	
+#Thread per la gestione dei pacchetti QUER, AQUE, ANEA
 class threadRisposte(threading.Thread): 
-	# The id of the client
+
 	id=''
-	# The connection
 	socketACK=None	
 	receive=1
-	# The server instance
 	server=None
-	# The constructor
+
 	def __init__(self, id, socket, server):
 		threading.Thread.__init__(self)
 		self.id=id
 		self.socketACK=socket
 		self.socketACK.setblocking(1)
 		self.server=server
-	# The running method
+
 	def run(self):	
 				
 		global listaPKTID
@@ -499,7 +494,9 @@ class threadRisposte(threading.Thread):
 		global listaPKTIDquer
 		global superPeer
 		global fileCondivisi
-		identificativo=leggi(self.socketACK,4)#146B per ogni riga
+
+		identificativo=leggi(self.socketACK,4)											#Ricezione dell'identificativo del pacchetto
+		
 		if not identificativo:
 			print "ERRORE RICEZIONE identificativo threadRisposte"
 			sys.exit(1)					
@@ -510,28 +507,28 @@ class threadRisposte(threading.Thread):
 		if identificativo =="RETR":					
 			Filemd5=leggi(self.socketACK,16)	
 			Filemd5=controlla16B(16,Filemd5)		
-			percorsoFile=trovaPercorso(fileCondivisi,Filemd5)
+			percorsoFile=trovaPercorso(fileCondivisi,Filemd5)							#Trovo il file e lo divido in chunk da 4096
 			fd = os.open(percorsoFile,os.O_RDONLY)		
 			filesize = os.fstat(fd)[stat.ST_SIZE]		
 			nChunk=filesize/4096    
 			
-			if (filesize%4096) !=0:  #se resto=0 allora i valori sono divisibili altrimenti aggiungiamo un valore
+			if (filesize%4096) !=0:  													#Se dividibile per 4096 invio, altrimenti aggiungo un chunk
 				nChunk=nChunk+1	
-			nChunk=str(nChunk).zfill(6)
+			nChunk=str(nChunk).zfill(6)													#Fill con 0 del numero dei chunk fino a 6
 					
 			pacchetto="ARET"+nChunk
-			#print pacchetto
 			print "Trasferimento in corso.."
 			i=1
-			while i<= int(nChunk):
-				buf=os.read(fd,4096) #legge dal file				
-				if not buf: break
+			while i<= int(nChunk):														#Ciclo per la costruzione dell'ARET
+				buf=os.read(fd,4096)				
+				if not buf: 
+					break
 				lBuf=len(buf)
 				lBuf=str(lBuf).zfill(5)	
-				pacchetto=pacchetto+lBuf+buf   #costruisco il pacchetto
+				pacchetto=pacchetto+lBuf+buf
 				i=i+1	
 			print "Trasferimento effettuato!!"			
-			self.socketACK.send(pacchetto) 
+			self.socketACK.send(pacchetto) 												#Invio dell'ARET
 			os.close(fd)
 			time.sleep(50)		
 			self.socketACK.close()	
@@ -545,8 +542,8 @@ class threadRisposte(threading.Thread):
 			Portaparametro=leggi(self.socketACK,5)
 			Portaparametro=controllaArgomentoStringa(5,Portaparametro)
 			pacchettoR=PKTID+IPparametro+Portaparametro						
-			if superPeer==0: #sono un peer
-				if listaPKTIDasup.has_key(PKTID)==0: #pktid non presente nella lista
+			if superPeer==0: 															#Se sono un peer controllo se gia nella lista e eventualmente aggiungo 
+				if listaPKTIDasup.has_key(PKTID)==0: 									#Se pktid non è presente nella lista aggiungo
 					print "Pacchetto ASUP ricevuto dal peer ", self.id," : ",PKTID," ",IPparametro," ",Portaparametro
 					scriviLog("Ricevuto ASUP dal peer "+ self.id+" : "+PKTID+" "+IPparametro+" "+Portaparametro)
 					listaPKTIDasup[PKTID]=time.time()					
@@ -555,15 +552,14 @@ class threadRisposte(threading.Thread):
 				else:
 					scriviLog("!!Pacchetto Scartato!!!! ASUP"+pacchettoR+" ricevuto del peer"+ip)
 			
-			if superPeer==1: #sono un super peer
-				if ricercaVicini(IPparametro,Portaparametro,listaSuperPeer) ==1: #se super non è presente nella listaSuperPeer				
+			if superPeer==1: 															#Se sono un super peer, aggiungo alla listaSuperPeer se non c'è gia
+				if ricercaVicini(IPparametro,Portaparametro,listaSuperPeer) ==1: 		#Se super non è presente nella listaSuperPeer aggiungo			
 					listaSuperPeer[indiceListaSuperPeer]=Vicini(IPparametro,Portaparametro)
 					indiceListaSuperPeer=indiceListaSuperPeer+1
 					print "Pacchetto ASUP ricevuto dal peer ", self.id," : ",PKTID," ",IPparametro," ",Portaparametro
 				
 				else:
 					scriviLog("!!Pacchetto Scartato!!!! "+pacchettoR+" ricevuto del peer"+ip)	
-			
 			
 		if identificativo =="SUPE":
 			ip=creaIP(self.id)
@@ -573,50 +569,38 @@ class threadRisposte(threading.Thread):
 			IPparametro=controllaArgomentoStringa(39,IPparametro)
 			Portaparametro=leggi(self.socketACK,5)
 			Portaparametro=controllaArgomentoStringa(5,Portaparametro)
-			
 			TTL=leggi(self.socketACK,2)
 			TTL=controllaDimensione(TTL)
 			pacchettoR=identificativo+PKTID+IPparametro+Portaparametro
-			if listaPKTIDsupe.has_key(PKTID) == 0 : #pktid non esistente
-				listaPKTIDsupe[PKTID]=time.time()				
+			if listaPKTIDsupe.has_key(PKTID) == 0 : 									#Controllo se già arrivato, se non: aggiungo a listaPKTIDsupe, mando ASUP se sono super e ritrasmetto 
+				listaPKTIDsupe[PKTID]=time.time()										
 				print "Pacchetto SUPE ricevuto dal peer ", self.id," : ",PKTID," ",IPparametro," ",Portaparametro," ",TTL
-				scriviLog("Ricevuto SUPE da "+self.id+" : "+IPparametro+":"+Portaparametro+" TTL:"+TTL)	
-				#print "TTL ",TTL
-				if superPeer==1: #se sono un super peer rispondo con ASUP					
+				scriviLog("Ricevuto SUPE da "+self.id+" : "+IPparametro+":"+Portaparametro+" TTL:"+TTL)
+				if superPeer==1: 														#Se sono un super peer rispondo con ASUP					
 					if IPparametro!=mioIP:
 						pacchetto=asup(PKTID,mioIP,PortaQuery)
 						v=threadRicerca(IPparametro,Portaparametro,pacchetto,-1)
 						v.start()
 						scriviLog("Invio "+pacchetto+" Vicino "+IPparametro+":"+Portaparametro)	
-				if(int(TTL)>1):  #invio di nuovo il pacchetto
-					#print "dentro if(ttl)"
+				if(int(TTL)>1):  														#Ritrasmetto SUPE
 					TTL=str(int(TTL)-1)
 					TTL=controllaDimensione(TTL)	
 					pacchetto=supe(PKTID,IPparametro,Portaparametro,TTL)						
 					i=0
-					#print "len(listaVicini): ",len(listaVicini)
-					#print "listavicini: ",listaVicini
-					while i< len(listaVicini): #indiceLista è l'indice per scorrere la lista dei vicini 
-						#print "while --> vicini: ",listaVicini
+					while i< len(listaVicini):
 						if(listaVicini[i].IP != IPparametro and listaVicini[i].IP !=ip):
-							#print "if"
-						#if((listaVicini[i].IP != IPparametro and listaVicini[i].PORTA != Portaparametro) and listaVicini[i].IP !=ip): #controllo per non rinviare il pacchetto a chi me lo ha inviato
-							vicini[i]=threadRicerca(listaVicini[i].IP,listaVicini[i].PORTA,pacchetto,i) #ritrasmetto il pacchetto
+							vicini[i]=threadRicerca(listaVicini[i].IP,listaVicini[i].PORTA,pacchetto,i)
 							vicini[i].start()	
 							scriviLog("Invio "+pacchetto+" Vicino "+listaVicini[i].IP+":"+listaVicini[i].PORTA)													
 						i=i+1	
 				
 			else:
 				scriviLog("!!Pacchetto Scartato!!!! "+pacchettoR+" ricevuto del peer"+ip)
-			
-			
 					
 		if identificativo =="QUER":
 			ip=creaIP(self.id)
-			#print "ip: ",ip
 			PKTID=leggi(self.socketACK,16)
 			PKTID=controlla16B(16,PKTID)
-		
 			IPparametro=leggi(self.socketACK,39)
 			IPparametro=controllaArgomentoStringa(39,IPparametro)
 			Portaparametro=leggi(self.socketACK,5)
@@ -628,52 +612,35 @@ class threadRisposte(threading.Thread):
 			Ricerca=controllaArgomentoStringa(20,Ricerca)	
 			Ricerca=Ricerca.strip()
 			pacchettoR=identificativo+PKTID+IPparametro+Portaparametro+TTL+Ricerca
-			#print "Pacchetto QUER ricevuto dal peer ", self.id," : ",PKTID," ",IPparametro," ",Portaparametro," ",Ricerca," ",TTL	
-			if listaPKTID.has_key(PKTID)==0: #pktid non esistente
+			if listaPKTID.has_key(PKTID)==0: 													#Se PKTID non è presente nella lista, salvo, inoltro, cerco
 				print "Pacchetto QUER ricevuto dal peer ", self.id," : ",PKTID," ",IPparametro," ",Portaparametro," ",Ricerca," ",TTL	
 				scriviLog("Pacchetto QUER ricevuto dal peer "+ self.id+" : "+PKTID+" "+IPparametro+" "+Portaparametro+" "+Ricerca+" "+TTL)	
 				listaPKTID[PKTID]=time.time()				
-				if(int(TTL)>1):  #invio di nuovo il pacchetto
+				if(int(TTL)>1):																	#Inoltro QUER
 					TTL=str(int(TTL)-1)
 					TTL=controllaDimensione(TTL)						
 					pacchetto=query(PKTID,IPparametro,Portaparametro,TTL,Ricerca)
 					i=0
-					while i< len(listaSuperPeer): #indiceLista è l'indice per scorrere la lista dei vicini 		
-						#print "vicino ",listaVicini[i].IP,listaVicini[i].PORTA
-						if(listaSuperPeer[i].IP != IPparametro and listaSuperPeer[i].IP != ip): #controllo per non rinviare il pacchetto a chi me lo ha inviato
-							vicini[i]=threadRicerca(listaSuperPeer[i].IP,listaSuperPeer[i].PORTA,pacchetto,i) #ritrasmetto il pacchetto
+					while i< len(listaSuperPeer):
+						if(listaSuperPeer[i].IP != IPparametro and listaSuperPeer[i].IP != ip): #Controllo di non rimandarlo al super peer mittente
+							vicini[i]=threadRicerca(listaSuperPeer[i].IP,listaSuperPeer[i].PORTA,pacchetto,i)
 							vicini[i].start() 	
 							scriviLog("Invio "+pacchetto+" Vicino "+listaSuperPeer[i].IP+":"+listaSuperPeer[i].PORTA)							
 						i=i+1
 			
-				#CERCO I MATCH NELLA MIA listaFile E LI SALVO IN listaRispAque
-				p=re.compile(Ricerca,re.IGNORECASE)
+				p=re.compile(Ricerca,re.IGNORECASE)												#Cerco se ho dei risultati nei miei file e invio AQUE
 				for i in listaFile:
-					#print "i.FILENAME:",i.FILENAME
-					#print "i.FILEMD5:",i.FILEMD5
-					#print "p.search(i.FILENAME) ",p.search(i.FILENAME)
-					if p.search(i.FILENAME): #se c'è
-						#print "l'ho trovato!!!!!!!!!!!!!!!!!!!!!!!!!!!1"
-						
+					if p.search(i.FILENAME):													#Se ho trovato il file invio AQUE
 						for l in i.SESSIONID:
 							FILENAME=controllaArgomentoStringa(100,i.FILENAME)
 							pacchetto=aque(PKTID,listaLoggati[l].IP,listaLoggati[l].PORTA,i.FILEMD5,FILENAME)
-							try:
-								socketAQUE=creazioneSocket(IPparametro,Portaparametro)							
-							except:
-								self.log('Cannot connect the socketAQUE.')
-								return False	
-							#filename=controllaArgomentoStringa(100,fileTrovati[k])
-							
+							socketAQUE=creazioneSocket(IPparametro,Portaparametro)
 							socketAQUE.send(pacchetto)	
-												
 							socketAQUE.close()
 							scriviLog("Invio "+pacchetto+" Vicino "+IPparametro+":"+Portaparametro)							
 			else:
 				scriviLog("!!!!!Pacchetto scartato "+pacchettoR+" Ricevuto dal peer "+ip)		
-		
-		########################
-			
+
 		if identificativo =="FIND":							
 			ip=creaIP(self.id)
 			SessionID=leggi(self.socketACK,16)
@@ -684,71 +651,48 @@ class threadRisposte(threading.Thread):
 			pacchettoR=identificativo+SessionID+Ricerca
 			print "Arrivato ",pacchettoR, "dal peer: ", ip
 			scriviLog("Arrivato "+pacchettoR+ "dal peer: "+ ip)
-			if superPeer==1: #sono superpeer
+			if superPeer==1: 																	#Se sono superpeer cerco file, invio QUER
 				PKTID=generaPKTID(16)
 				sessionidPKTID[PKTID]=SessionID
-				#TTL
-#DA RICONTRALLARE
-				TTL="03"#raw_input("Inserisci Time to live (TTL) per inviare la quer: ")
+				TTL="03"
 				TTL=controllaDimensione(TTL)
-				PortaAscolto20s=randint(40000,60000)
-				pacchettoQUER=query(PKTID,mioIP,str(PortaAscolto20s),TTL,Ricerca)
-				listaPKTIDquerFind[PKTID]=time.time()
+				PortaAscolto20s=randint(40000,60000)											#Scelgo porta random
+				pacchettoQUER=query(PKTID,mioIP,str(PortaAscolto20s),TTL,Ricerca)				
+				listaPKTIDquerFind[PKTID]=time.time()											#Salvo pacchetto nella lista della FIND per controllo tempo
 				
-				#CERCO I MATCH NELLA MIA listaFile E LI SALVO IN listaRispAque
-				p=re.compile(Ricerca,re.IGNORECASE)
+				p=re.compile(Ricerca,re.IGNORECASE)												#Preparo la ricerca
 				for i in listaFile:
-					#print "i.FILENAME:",i.FILENAME
-					#print "i.FILEMD5:",i.FILEMD5
-					#print "p.search(i.FILENAME) ",p.search(i.FILENAME)
-					if p.search(i.FILENAME): #se c'è
-						#print "l'ho trovato!!!!!!!!!!!!!!!!!!!!!!!!!!!1"
-						if listaPKTIDquerFind.has_key(PKTID) == 1: #se è presente
+					if p.search(i.FILENAME):													#Se ho trovato il file nella listaFile per nome
+						if listaPKTIDquerFind.has_key(PKTID) == 1: 								#Se è presente nella lista delle FIND
 							trovatoPKTID=0
-							#for indice in listaRispAque.keys():
-							for indice in listaRispAque:
-								#print "SONO DENTRO:",indice.PKTID
+							for indice in listaRispAque:										#Se lo trovo nella lista delle risp AQUE esco dal ciclo										
 								if indice.PKTID==PKTID:
 									trovatoPKTID=1
-									#indicetrovato=indice
 									break
-									
-							if trovatoPKTID==1:
+							if trovatoPKTID==1:													#Se già nella lista risposte AQUE
 								trovatoMD5=0
-								#print "dentro if trovatoPKTID==1:"
-								for chiave in indice.LISTA:#indicetrovato.LISTA:
+								for chiave in indice.LISTA:
 									if chiave.FILEMD5==i.FILEMD5:
 										trovatoMD5=1
-										#print "file md5 presente"
 										break	
-								#print "trovatoMD5= ",trovatoMD5
-								if trovatoMD5==1:
-									#print "dentro"
-									for s in range(len(i.SESSIONID)):
-										#print "mio SESSIONID: ",SessionID,"i.SESSIONID[s]: ",i.SESSIONID[s]
+								if trovatoMD5==1:												#Se anche l'md5 coincide, salvo ip e porta di chi ce l'ha
+									for s in range(len(i.SESSIONID)):							
 										if SessionID != i.SESSIONID[s]:
 											chiave.LISTAIPPORTA.append(creaLISTAIPPORTA(listaLoggati[i.SESSIONID[s]].IP,listaLoggati[i.SESSIONID[s]].PORTA))
 								else:
-									if SessionID != i.SESSIONID[0]:
+									if SessionID != i.SESSIONID[0]:								#Aggiungo peer ai possessori
 										indice.LISTA.append(creaLISTA(i.FILEMD5,i.FILENAME, listaLoggati[i.SESSIONID[0]].IP,listaLoggati[i.SESSIONID[0]].PORTA))
-										#print "non ho trovato filmd5 aggiungo una nuova riga al pktid"
 										for s in range(1,len(i.SESSIONID)):
 											if SessionID != i.SESSIONID[s]:
-											#print "dentro s:",s
-											#print "len(indice.lista)",len(indice.LISTA)," ", listaLoggati[i.SESSIONID[s]].IP," ",listaLoggati[i.SESSIONID[s]].PORTA
 												indice.LISTA[len(indice.LISTA)-1].LISTAIPPORTA.append(creaLISTAIPPORTA(listaLoggati[i.SESSIONID[s]].IP,listaLoggati[i.SESSIONID[s]].PORTA))
 									else:
 										if len(i.SESSIONID)!=1:
 											indice.LISTA.append(creaLISTA(i.FILEMD5,i.FILENAME, listaLoggati[i.SESSIONID[1]].IP,listaLoggati[i.SESSIONID[1]].PORTA))
-											#print "non ho trovato filmd5 aggiungo una nuova riga al pktid"
 											for s in range(2,len(i.SESSIONID)):
 												if SessionID != i.SESSIONID[s]:
-												#print "dentro s:",s
-												#print "len(indice.lista)",len(indice.LISTA)," ", listaLoggati[i.SESSIONID[s]].IP," ",listaLoggati[i.SESSIONID[s]].PORTA
 													indice.LISTA[len(indice.LISTA)-1].LISTAIPPORTA.append(creaLISTAIPPORTA(listaLoggati[i.SESSIONID[s]].IP,listaLoggati[i.SESSIONID[s]].PORTA))
 									
-							else:
-								#print "il pktid non è ancora presente"
+							else:																#Se il pktid non è ancora presente aggiungo nella lista AQUE
 								if SessionID != i.SESSIONID[0]:
 									listaRispAque.append(creaListaRispAque(PKTID,i.FILEMD5,i.FILENAME, listaLoggati[i.SESSIONID[0]].IP,listaLoggati[i.SESSIONID[0]].PORTA))															
 									for s in range(1,len(i.SESSIONID)):
@@ -760,20 +704,14 @@ class threadRisposte(threading.Thread):
 										for s in range(2,len(i.SESSIONID)):
 											if SessionID != i.SESSIONID[s]:
 												listaRispAque[len(listaRispAque)-1].LISTA[0].LISTAIPPORTA.append(creaLISTAIPPORTA(listaLoggati[i.SESSIONID[s]].IP,listaLoggati[i.SESSIONID[s]].PORTA))
-								#print "listaRispAque: ",listaRispAque
-				#AVVIO IL THREAD CHE ASPETTA LE AQUE
-				s=ThreadAscolto20s(PortaAscolto20s)
+				
+				s=ThreadAscolto20s(PortaAscolto20s)												#Avvio il thread che aspetta le AQUE
 				s.start()
 												
-				#PROPAGO LA RICHIESTA QUER AI SUPERPEER
+				
 				k=0
-				while k< len(listaSuperPeer): 
-						try:
-							socketFIND=creazioneSocket(listaSuperPeer[k].IP,listaSuperPeer[k].PORTA)							
-						except:
-							self.log('Cannot connect the socketFIND.')
-							return False	
-						#filename=controllaArgomentoStringa(100,fileTrovati[k])						
+				while k< len(listaSuperPeer): 													#Invio la QUER ai superpeer
+						socketFIND=creazioneSocket(listaSuperPeer[k].IP,listaSuperPeer[k].PORTA)												
 						socketFIND.send(pacchettoQUER)	
 						k=k+1						
 						socketFIND.close()
@@ -783,19 +721,17 @@ class threadRisposte(threading.Thread):
 				s.stop()
 				print "Sono scaduti i 20sec"					
 							
-				for i in listaRispAque: #scorro i PKTID
-					#print "\nstampo i ",i.PKTID						
+				for i in listaRispAque: 														#Scorro i PKTID						
 					if PKTID==i.PKTID:	
 						numMD5="%03d" % len(i.LISTA)
 						pacchetto="AFIN"+ numMD5
 						pacchettoPrint="AFIN "+ numMD5+"\n"
-						#print "pacchetto",pacchetto
-						for k in i.LISTA: #scorro gli MD5
+						for k in i.LISTA: 														#Scorro gli MD5
 							FILENAME=controllaArgomentoStringa(100,k.FILENAME)
 							numIPPORTA="%03d" % len(k.LISTAIPPORTA)
 							pacchetto= pacchetto+k.FILEMD5+FILENAME+numIPPORTA
 							pacchettoPrint=pacchettoPrint+" "+FILENAME.strip()+" "+numIPPORTA
-							for ipp in k.LISTAIPPORTA: #scorro gli IP e le PORTE
+							for ipp in k.LISTAIPPORTA: 											#Scorro gli IP e le PORTE
 								pacchetto= pacchetto+ipp.IP+ipp.PORTA
 								pacchettoPrint=pacchettoPrint+" ip:"+ipp.IP+" porta:"+ipp.PORTA+"\n"
 						scriviLog("Inviato "+pacchetto)
@@ -803,10 +739,9 @@ class threadRisposte(threading.Thread):
 				print pacchetto					
 				self.socketACK.send(pacchetto)				
 				
-				listaPKTIDquerFind={} #azzero la lista listaPKTIDquerFind				
+				listaPKTIDquerFind={} 															#Azzero la lista listaPKTIDquerFind				
 				print
-				print			
-				#print "sono arrivata alla fine!!!!!!"					
+				print				
 			else:
 				scriviLog("!!!!!Pacchetto scartato "+pacchettoR+" Ricevuto dal peer "+ip)		
 				
@@ -819,17 +754,17 @@ class threadRisposte(threading.Thread):
 			pacchettoR=identificativo+IPparametro+Portaparametro
 			print "Ricevuto LOGI da "+IPparametro+":"+Portaparametro
 			scriviLog("Ricevuto LOGI da "+IPparametro+":"+Portaparametro)	
-			if superPeer==1: #sono super peer
-				#controllo che ip e porta non siano gia presenti nella listaLoggati
-				peerPresente=0 #il peer non si era ancora loggato
+			if superPeer==1: 																	#Se sono super peer
+																								#Controllo che ip e porta non siano gia presenti nella listaLoggati
+				peerPresente=0 																	#Il peer non si era ancora loggato
 				for chiave in listaLoggati.keys():
 					if IPparametro==listaLoggati[chiave].IP and Portaparametro==listaLoggati[chiave].PORTA:
-						peerPresente=1 #peer gia loggato
+						peerPresente=1 															#Peer gia loggato
 						SessionID="0000000000000000"
 						scriviLog("Peer già loggato")	
 						break
 				if peerPresente==0:	
-					SessionID=generaPKTID(16) #genero il sessionID
+					SessionID=generaPKTID(16) 													#Genero il sessionID
 					listaLoggati[SessionID]=Loggati(IPparametro,Portaparametro)
 					
 				pacchettoALGI="ALGI"+SessionID
@@ -849,21 +784,21 @@ class threadRisposte(threading.Thread):
 			Filename=Filename.strip()
 			pacchettoR=identificativo+SessionID+Filemd5+Filename
 			print "Ricevuto pacchetto "+pacchettoR+" da utente "+ip
-			if superPeer==1: #sono super peer				
-				if listaLoggati.has_key(SessionID): #controllo che il SessionID sia loggato (Se la chiave SessionID è presente)		
+			if superPeer==1: 																	#Se sono super peer				
+				if listaLoggati.has_key(SessionID): 											#Controllo che il SessionID sia loggato (Se la chiave SessionID è presente)		
 					filePresente=0
-					for files in listaFile:	#controllo che non sia già presente il filemd5
-						if files.FILEMD5==Filemd5: #se il filemd5 è presente allora lo rinomino
+					for files in listaFile:														#Controllo che non sia già presente il filemd5
+						if files.FILEMD5==Filemd5: 												#Se il filemd5 è presente allora lo rinomino
 							filePresente=1
 							files.FILENAME=Filename
 							trovato=0
-							for id in range(len(files.SESSIONID)): #controllo che il SessionID che ha aggiunto il file è gia presente
+							for id in range(len(files.SESSIONID)): 								#Controllo che il SessionID che ha aggiunto il file è gia presente
 								if files.SESSIONID[id]==SessionID:	
 									trovato=1
 									break 
-							if trovato==0: #sessionId non presente	
-								files.SESSIONID.append(SessionID) #aggiungo il SessionID per il filemd5 inserito
-					if filePresente==0: #il filemd5 non è presente nella tabella
+							if trovato==0: 														#SessionId non presente	
+								files.SESSIONID.append(SessionID) 								#Aggiungo il SessionID per il filemd5 inserito
+					if filePresente==0: 														#Il filemd5 non è presente nella tabella
 						riga=StrutturaFile(Filemd5,Filename,SessionID)
 						listaFile.append(riga)							
 				else:
@@ -878,12 +813,12 @@ class threadRisposte(threading.Thread):
 			Filemd5=leggi(self.socketACK,16)
 			Filemd5=controllaArgomentoStringa(16,Filemd5)				
 			pacchettoR=identificativo+SessionID+Filemd5
-			if superPeer==1: #sono super peer	
-				if listaLoggati.has_key(SessionID): #controllo che il SessionID sia loggato (Se la chiave SessionID è presente)	
+			if superPeer==1: 																	#Se sono super peer	
+				if listaLoggati.has_key(SessionID): 											#Controllo che il SessionID sia loggato (Se la chiave SessionID è presente)	
 					print "Ricevuto pacchetto "+pacchettoR+" da utente "+ip
 					for file in listaFile:
 						if file.FILEMD5==Filemd5:
-							file.SESSIONID.remove(SessionID) #cancello il SessionID-->quel SessionID non è più associato a quel filemd5
+							file.SESSIONID.remove(SessionID) 									#Cancello il SessionID-->quel SessionID non è più associato a quel filemd5
 							if len(file.SESSIONID)==0: 
 								listaFile.remove(file)						
 				else:
@@ -896,28 +831,21 @@ class threadRisposte(threading.Thread):
 			SessionID=leggi(self.socketACK,16)
 			SessionID=controlla16B(16,SessionID)				
 			pacchettoR=identificativo+SessionID
-			if superPeer==1: #sono super peer	
-				if listaLoggati.has_key(SessionID): #controllo che il SessionID sia loggato (Se la chiave SessionID è presente)	
+			if superPeer==1: 																	#Se sono super peer	
+				if listaLoggati.has_key(SessionID): 											#Controllo che il SessionID sia loggato (Se la chiave SessionID è presente)	
 					nCancellati=0
-					#print "len(listaFILE)",str(len(listaFile))
 														
-					for file in listaFile:					
-						#print "len(file.SESSIONID) ",str(len(file.SESSIONID))
-						#print file.FILENAME
+					for file in listaFile:
 						for i in range(len(file.SESSIONID)):
-							#print "DENTROOOOOOOOOO"
 							if file.SESSIONID[i]==SessionID:
 								file.SESSIONID.pop(i) 
 								nCancellati=nCancellati+1
 					for file in range(len(listaFile),0):
-						#print len(listaFile[file].SESSIONID)
 						if len(listaFile[file].SESSIONID) == 0:
-							#print "Rimuovo ",listaFile[file].FILENAME
 							listaFile.pop(file)
 					
 					nCancellati=controllaArgomentoNumero(3,str(nCancellati))
 					algo(self.socketACK,nCancellati)
-					#listaLoggati.remove(SessionID)
 					listaLoggati.pop(SessionID)
 					pacchettoALGO="ALGO"+nCancellati
 					scriviLog("Inviato "+pacchettoALGO+ " a "+ip)	
@@ -934,17 +862,16 @@ class threadRisposte(threading.Thread):
 		self.receive=0
 		self.socketACK.close()
 
-		# Destroy from the server this client?
 		if not nodestroy:
 			del self.server.gestioneRisposte[self.id]
 
-	# Log. By default it uses the server class
 	def log(self, msg):
-		self.server.log('Client '+self.id+': '+msg)			
+		self.server.log('Client '+self.id+': '+msg)
+
+#Thread per la query da 20s riguardo le query di ricerca 
 class ThreadAscolto20s(threading.Thread):
 	ip=""
-	porta=""	
-	maxconn=5	
+	porta=""		
 	socketAscolto20s=''
 	acceso=1
 	def __init__(self,Porta):
@@ -958,71 +885,43 @@ class ThreadAscolto20s(threading.Thread):
 		global listaRispAque
 		global ricercheSuperPeer
 		global superPeer
-		# Create the socket
-		try:
-			self.socketAscolto20s=socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-		except:
-			print "errore socket"
-		try:
-			self.socketAscolto20s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		except:
-			print "errore socketopt"
-		try:
-			self.socketAscolto20s.bind(("", int(self.porta)))
-			#print ('la socket è creata.')
-		except:
-			self.log('Cannot bind the socketAscolto20s.')
-			return False
 
-		# Listen on it
-		try:
-			self.socketAscolto20s.listen(self.maxconn)
-			#print ('la socket è in ascolto.')
-		except:
-			self.log('Cannot listen on the socketAscolto20s.')
-			return False	
+		
+		self.socketAscolto20s=socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+		self.socketAscolto20s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		self.socketAscolto20s.bind(("", int(self.porta)))
+		self.socketAscolto20s.listen(5)
+			
 	
-		while self.acceso:			
-			try:				
-				(conn,addr) = self.socketAscolto20s.accept()
-				cid=addr[0]
-				gestioneRisposte20s[cid]=threadRisposte20s(cid, conn,self)
-				gestioneRisposte20s[cid].start()
-			except:
-				print "Errore nell'accept del ThreadAscolto20s"
-				############################EROQUI
+		while self.acceso:							
+			(conn,addr) = self.socketAscolto20s.accept()
+			cid=addr[0]
+			gestioneRisposte20s[cid]=threadRisposte20s(cid, conn,self)
+			gestioneRisposte20s[cid].start()
 				
 	def log(self, msg):
 		print(msg)
+
 	def closeSocketAscolto20s(self):
-		try:
-			self.socketAscolto20s.close()
-			return True
-		except:
-			self.log('Cannot close socketAscolto20s')
-			return False
+		self.socketAscolto20s.close()
+		return True
+
 	def stop(self):
 		self.acceso=0
 			
 		
-									
+#Thread per le risposte AQUE				
 class threadRisposte20s(threading.Thread): 
-	# The id of the client
 	id=''
-	# The connection
 	socketRisposte20s=None	
 	receive=1
-	# The server instance
 	server=None
-	# The constructor
 	def __init__(self, id, socket, server):
 		threading.Thread.__init__(self)
 		self.id=id
 		self.socketRisposte20s=socket
 		self.server=server		
 		
-
-	# The running method
 	def run(self):	
 					
 		global listaPKTID
@@ -1031,16 +930,18 @@ class threadRisposte20s(threading.Thread):
 		global spegniRicerca		
 		global listaSuperPeer
 		global indiceListaSuperPeer
-		global salvataggio #lista dei parametri di afin
+		global salvataggio																	#Lista parametri AFIN
 		global indice 
 		global listaRispAque
-		identificativo=leggi(self.socketRisposte20s,4)#146B per ogni riga
-		#print identificativo
+
+		identificativo=leggi(self.socketRisposte20s,4)
+		
 		if not identificativo:
 			print "ERRORE RICEZIONE PACCHETTO 20S"
 			sys.exit(1)					
 		if identificativo !="AQUE":
 			print "ERRORE RISPOSTA IDENTIFICATIVO AQUE"
+
 		if identificativo =="AQUE":			
 			self.id=creaIP(self.id)
 			PKTID=leggi(self.socketRisposte20s,16)
@@ -1054,11 +955,9 @@ class threadRisposte20s(threading.Thread):
 			Filename=leggi(self.socketRisposte20s,100)
 			Filename=Filename.strip();
 			
-			if listaPKTIDquerFind.has_key(PKTID) == 1 or listaPKTIDquer.has_key(PKTID) == 1: #se è presente
+			if listaPKTIDquerFind.has_key(PKTID) == 1 or listaPKTIDquer.has_key(PKTID) == 1: #Se è presente il pktid, corrisponde ad una richiesta
 				trovatoPKTID=0
-				#for indice in listaRispAque.keys():
 				for indice in listaRispAque:
-					#print "SONO DENTRO:",indice.PKTID
 					if indice.PKTID==PKTID:
 						trovatoPKTID=1
 						break
@@ -1068,7 +967,6 @@ class threadRisposte20s(threading.Thread):
 					for chiave in indice.LISTA:
 						if chiave.FILEMD5==Filemd5:
 							trovatoMD5=1
-							#print "file md5 presente"
 							break	
 							
 					if trovatoMD5==1:
@@ -1077,10 +975,8 @@ class threadRisposte20s(threading.Thread):
 								chiave.LISTAIPPORTA.append(creaLISTAIPPORTA(IPparametro,Portaparametro))
 					else:
 						indice.LISTA.append(creaLISTA(Filemd5,Filename, IPparametro,Portaparametro))
-						#print "non ho trovato filmd5 aggiungo una nuova riga al pktid"
 						
 				else:
-					#print "il pktid non è ancora presente"
 					listaRispAque.append(creaListaRispAque(PKTID,Filemd5,Filename, IPparametro,Portaparametro))															
 					
 				
@@ -1092,21 +988,19 @@ class threadRisposte20s(threading.Thread):
 		self.receive=0
 		self.socketRisposte20s.close()
 
-		# Destroy from the server this client?
 		if not nodestroy:
 			del self.server.gestioneRisposte20s[self.id]
 
-	# Log. By default it uses the server class
 	def log(self, msg):
 		self.server.log('Client '+self.id+': '+msg)					
-#-----------------------------------------------------------------------------------------
-#Main----------------------------------
+
+#
 print "PROGETTO 3... Scegli cosa vuoi essere:"
 print "1. SUPER peer,"
 print "2. peer,"
 scelta=raw_input("Numero scelta: \n")
 
-if scelta=="1": #SUPER PEER
+if scelta=="1": 																					#SUPER PEER
 	superPeer=1
 	print "Salve super peer...\n"
 	scriviLog("NUOVA SESSIONE super PEER")
@@ -1117,29 +1011,20 @@ if scelta=="1": #SUPER PEER
 	listaVicini[0]=Vicini(IP,Porta)
 	scriviLog("Primo vicino: "+IP+":"+Porta)
 
-	#IP=raw_input("Inserisci IP vicino 2: ") 
-	#Porta=raw_input("Inserisci Porta vicino 2: ") 
-	#Porta=controllaArgomentoNumero(5,Porta)
-	#IP=creaIP(IP)  
-	#listaVicini[1]=Vicini(IP,Porta)
-	#scriviLog("Secondo vicino: "+IP+":"+Porta)
-	SalvaFile() #salvo i filemd5 e filename che voglio condividere
+	SalvaFile() 																					#Salvo i filemd5 e filename che voglio condividere
 	lista=(os.listdir('./immagine')	)
 	i=0
 	while i <len(lista):
 		percorso="./immagine/"+lista[i]
 		filemd5=creazioneFilemd5(percorso)
-		#NOI NON AVREMO MAI DUE NOMI DIVERSI CON LO STESSO MD5!!!!
 		listaFile.append(StrutturaFile(filemd5,lista[i],"00000000000000ME"))
 		i=i+1
 	
 	listaLoggati["00000000000000ME"]=Loggati(mioIP,PortaQuery)
 	
 	j=0
-	#faccio partire il thread del server per stare in ascolto di possibili download
-	
-	#faccio partire il thread di ascolto generale 
-	ascolto=ThreadAscolto(PortaQuery)
+
+	ascolto=ThreadAscolto(PortaQuery)																#Avvio il thread di ascolto generale  
 	ascolto.start()
 	scriviLog("Threads partiti")
 	#menu:
@@ -1159,22 +1044,22 @@ if scelta=="1": #SUPER PEER
 			scelta=raw_input("Numero operazione: \n")
 
 			
-			if scelta=="1": #ricerca file
+			if scelta=="1": 																		#Ricerca file
 				spegniRicerca=0
 				ricercheSuperPeer=[]						
 				TTL=raw_input("Inserisci Time to live (TTL): ")
 				TTL=controllaDimensione(TTL)
-				Ricerca=raw_input("Inserisci la stringa di ricerca: ") #il controllo della lunghezza di Ricerca è dentro alla funzione query			
+				Ricerca=raw_input("Inserisci la stringa di ricerca: ")			
 				PKTID=generaPKTID(16)
 				PKTID=controlla16B(16,PKTID)
-				listaPKTIDquer[PKTID]=time.time()  #ci salviamo il PKTID che mandiamo
+				listaPKTIDquer[PKTID]=time.time()  													#Salviamo il PKTID che mandiamo
 				j=j+1
 				PortaAscolto20s=randint(40000,60000)
-				pacchetto=query(PKTID,mioIP,str(PortaAscolto20s),TTL,Ricerca) #costruisco il pacchetto QUER
+				pacchetto=query(PKTID,mioIP,str(PortaAscolto20s),TTL,Ricerca) 						#Costruisco il pacchetto QUER
 				s=ThreadAscolto20s(PortaAscolto20s)
 				s.start()
 				i=0			
-				while i< len(listaSuperPeer):		#inviamo il pacchetto QUER a tutti i vicini			
+				while i< len(listaSuperPeer):														#Invio il pacchetto QUER a tutti i vicini			
 					vicini[i]=threadRicerca(listaSuperPeer[i].IP,listaSuperPeer[i].PORTA,pacchetto,i)
 					vicini[i].start()
 					scriviLog("Invio "+pacchetto+"  Al superpeer "+listaSuperPeer[i].IP+":"+listaSuperPeer[i].PORTA)
@@ -1184,36 +1069,32 @@ if scelta=="1": #SUPER PEER
 			
 				
 				
-				p=re.compile(Ricerca.strip(),re.IGNORECASE)
+				p=re.compile(Ricerca.strip(),re.IGNORECASE)											#Inizializzo la ricerca
 				for i in listaFile:
-					#print "i.FILENAME:",i.FILENAME
-					#print "i.FILEMD5:",i.FILEMD5
-					#print "p.search(i.FILENAME) ",p.search(i.FILENAME)
-					if p.search(i.FILENAME): #se c'è
-						#print "l'ho trovato!!!!!!!!!!!!!!!!!!!!!!!!!!!1"
+					if p.search(i.FILENAME):	 													#Se ci sono risultati
 						for l in i.SESSIONID:
 							if l!="00000000000000ME":
 								ricercheSuperPeer.append(SalvaParametri(listaLoggati[l].IP,listaLoggati[l].PORTA,i.FILEMD5,i.FILENAME,PKTID))
-				#ora stampo a video da listaPKTIDquer che sono i risultati del super peer
+																									#Stampo a video da listaPKTIDquer che sono i risultati del super peer
 				for j in listaPKTIDquer.keys(): 
-					for i in listaRispAque: #scorro i PKTID
+					for i in listaRispAque: 														#Scorro i PKTID
 						if j==i.PKTID:				
-							for k in i.LISTA: #scorro gli MD5
-								for ipp in k.LISTAIPPORTA: #scorro gli IP e le PORTE
+							for k in i.LISTA: 														#Scorro gli MD5
+								for ipp in k.LISTAIPPORTA: 											#Scorro gli IP e le PORTE
 									ricercheSuperPeer.append(SalvaParametri(ipp.IP,ipp.PORTA,k.FILEMD5,k.FILENAME,i.PKTID))
 				j=0
 				for i in ricercheSuperPeer:
 					print j,") ",i.FILENAME," ",i.IP," ",i.PORTA
 					j=j+1
-				listaPKTIDquer={}	#azzero la lista listaPKTIDquer	
+				listaPKTIDquer={}																	#Azzero la lista listaPKTIDquer	
 				
-			if scelta=="2" :#ricerca superpeer		
+			if scelta=="2" :																		#Ricerca superpeer		
 				listaSuperPeer={}
 				TTL=raw_input("Inserisci Time to live (TTL) per i vicini: ")
 				TTL=controllaDimensione(TTL)
 				PKTID=generaPKTID(16)
 				PKTID=controlla16B(16,PKTID)	
-				pacchetto=supe(PKTID,mioIP,PortaQuery,TTL) #creazione pacchetto NEAR
+				pacchetto=supe(PKTID,mioIP,PortaQuery,TTL) 											#Creazione pacchetto NEAR
 				try:
 					socketVicino1=creazioneSocket(listaVicini[0].IP,listaVicini[0].PORTA)							
 					socketVicino1.send(pacchetto)
@@ -1228,27 +1109,24 @@ if scelta=="1": #SUPER PEER
 				except:
 					print "Il nodo 2 si è disconnesso."					
 				
-			if scelta=="3": #download file			
+			if scelta=="3": 																		#Download file			
 				print "download file in corso....."
 				loc="./fileScaricati/"
 				recvfn	= raw_input("Inserisci il nome del file.estensione per salvare: ")
-				#loc = raw_input("In che cartella salvare? ")
 				if loc[-1] != os.sep: loc += os.sep
 				fd = os.open(loc+recvfn, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0666)			
 				indice=raw_input("Inserisci indice del file da scaricare: ")
 				spegniRicerca=1
 				IP=ricercheSuperPeer[int(indice)].IP
 				Porta=ricercheSuperPeer[int(indice)].PORTA
-				Filemd5=ricercheSuperPeer[int(indice)].FILEMD5
-				#Filename=parametri[int(indice)].FILENAME			
-				socketD=download(IP,Porta,Filemd5) #creazione pacchetto RETR
-				#risposta al download dal peer
-				risposta=leggi(socketD,10) #impostare bene le dimensioni
+				Filemd5=ricercheSuperPeer[int(indice)].FILEMD5	
+				socketD=download(IP,Porta,Filemd5) 													#Creazione pacchetto RETR
+																									#Risposta al download dal peer
+				risposta=leggi(socketD,10)
 				if not risposta:
 					print "ERRORE RICEZIONE PACCHETTO DOWNLOAD DAL PEER"
 					sys.exit(1)
 				identificativo=risposta[0:4]
-				#print identificativoPeer
 				if identificativo !="ARET":
 					print "ERRORE RISPOSTA DOWNLOAD PEER"
 				nChunk=int(risposta[4:10])  			
@@ -1264,11 +1142,11 @@ if scelta=="1": #SUPER PEER
 				os.close(fd)			
 				socketD.close() 
 				
-			if scelta=="4":#stampo la lista dei super peer vicini
+			if scelta=="4":																			#Stampo la lista dei super peer vicini
 				stampaVicini(listaSuperPeer)
 				
 				
-			if scelta=="5":#stampo la lista dei peer collegati
+			if scelta=="5":																			#Stampo la lista dei peer collegati
 				for i in listaLoggati.keys():
 					print i," ",listaLoggati[i].IP," ",listaLoggati[i].PORTA
 			if scelta=="6":
@@ -1276,11 +1154,11 @@ if scelta=="1": #SUPER PEER
 					for id in i.SESSIONID:
 						print i.FILENAME,"  ",id
 			if scelta=="7":				
-				ascolto.closeSocketACK()#chiudiamo la socket del threadAscolto
+				ascolto.closeSocketACK()															#Chiudiamo la socket del threadAscolto
 				print "...FINE...."
 				break
 
-if scelta=="2": #PEER
+if scelta=="2": 																					#PEER
 	superPeer=0
 	print "Salve peer....\n"
 	scriviLog("NUOVA SESSIONE PEER")
@@ -1290,13 +1168,6 @@ if scelta=="2": #PEER
 	Porta=controllaArgomentoNumero(5,Porta)
 	listaVicini[0]=Vicini(IP,Porta)
 	scriviLog("Primo vicino: "+IP+":"+Porta)
-
-	#IP=raw_input("Inserisci IP vicino 2: ") 
-	#Porta=raw_input("Inserisci Porta vicino 2: ") 
-	#Porta=controllaArgomentoNumero(5,Porta)
-	#IP=creaIP(IP)  
-	#listaVicini[1]=Vicini(IP,Porta)
-	#scriviLog("Secondo vicino: "+IP+":"+Porta)
 	ascolto=ThreadAscolto(PortaQuery)
 	ascolto.start()
 	scriviLog("Thread ascolto partito")
@@ -1307,41 +1178,24 @@ if scelta=="2": #PEER
 		TTL=controllaDimensione(TTL)
 		PKTID=generaPKTID(16)
 		PKTID=controlla16B(16,PKTID)	
-		pacchetto=supe(PKTID,mioIP,PortaQuery,TTL) #creazione pacchetto SUPE
+		pacchetto=supe(PKTID,mioIP,PortaQuery,TTL) 													#Creazione pacchetto SUPE
 		try:
 			print "Vicino 1: ",listaVicini[0].IP
-			socketVicino1=creazioneSocket(listaVicini[0].IP,listaVicini[0].PORTA)	
-			#socketVicino2=creazioneSocket(listaVicini[1].IP,listaVicini[1].PORTA)	
+			socketVicino1=creazioneSocket(listaVicini[0].IP,listaVicini[0].PORTA)
 			socketVicino1.send(pacchetto)
-			#socketVicino2.send(pacchetto)	
 			socketVicino1.close()
 			print "Mandato SUPE al nodo 1."
 			scriviLog("Inviato: "+pacchetto)
-			#socketVicino2.close()
 		except:
 			print "Il nodo 1 si è disconnesso."
-		#try:
-		#	print "Vicino 2: ",listaVicini[1].IP
-		#	socketVicino2=creazioneSocket(listaVicini[1].IP,listaVicini[1].PORTA)	
-		#	socketVicino2.send(pacchetto)	
-		#	socketVicino2.close()
-		#	print "Mandato SUPE al nodo 2."
-		#	scriviLog("Inviato: "+pacchetto)
-		#except:
-		#	print "Il nodo 2 si è disconnesso."	
 	
-	#LOGIN:
+																									#LOGIN
 	if raw_input("Login?  [y/n] ").lower() == "y":
-		#OPERAZIONI DI LOGIN
-		
-		#mi connetto al super peer scelto
 		IPP2P=listaSuperPeer[0].IP	
 		PortaP2P=listaSuperPeer[0].PORTA
 		scriviLog("Provo a loggarmi ad "+IPP2P+" "+PortaP2P)
-		#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-		peer_socket=creazioneSocket(IPP2P,"03000")  ###########################################
-		peer_socket= logi(peer_socket,mioIP,PortaQuery)	
-		#risposta al login
+		peer_socket=creazioneSocket(IPP2P,"03000")
+		peer_socket= logi(peer_socket,mioIP,PortaQuery)												#Connessione al peer di ascolto
 		risposta=leggi(peer_socket,20) 
 		if not risposta:
 			print "ERRORE RICEZIONE PACCHETTO LOGIN: nessuna risposta"
@@ -1352,7 +1206,7 @@ if scelta=="2": #PEER
 			print "ERRORE RICEZIONE PACCHETTO LOGIN: no ALGI"
 			scriviLog("ERRORE RICEZIONE PACCHETTO LOGIN: no ALGI")
 			sys.exit(1)
-		SessionID=risposta[4:len(risposta)] #divide la risposta per ogni punto in un vettore di stringhe[0 1 2]:prendiamo l'ultimo
+		SessionID=risposta[4:len(risposta)] 														#Divido la risposta
 		if SessionID=="0000000000000000":
 			print "SessionID già presente"
 			scriviLog("SessionID già presente")
@@ -1360,17 +1214,15 @@ if scelta=="2": #PEER
 		print "SEI LOGGATO"
 		scriviLog("Loggato a "+IPP2P+" "+PortaP2P)
 		peer_socket.close()
-		# Create the instance
 	
 
-		indiceLista=0 #indice della lista che salva i file che il peer aggiunge
+		indiceLista=0 																				#Indice della lista che salva i file che il peer aggiunge
 
 
 		while 1:
 			print
 			print
 			print "OPERAZIONI POSSIBILI:"
-			#print "0. Login;"
 			print "1. aggiunta file;"
 			print "2. rimozione file;"
 			print "3. ricerca file;"
@@ -1378,60 +1230,46 @@ if scelta=="2": #PEER
 			print "5. Logout."
 			
 			scelta=raw_input("numero operazione: ")
-
-			#if scelta=="0": #LOGIN
 			
-			if scelta=="1": #aggiunta file
-				#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-				peer_socket=creazioneSocket(IPP2P,"3000") ##################################
+			if scelta=="1": 																		#Aggiunta file
+				peer_socket=creazioneSocket(IPP2P,"3000")
 				print "aggiunta file in corso....."
 				percorsoFile="./immagine/"				
-				Filename=raw_input("Inserisci nome del file da aggiungere: ")				
-				#Filename=percorsoFile.split(os.sep)[-1] #dal percorso del file recupero l'ultimo parametro che è il nome del file
+				Filename=raw_input("Inserisci nome del file da aggiungere: ")
+																									#Dal percorso del file recupero l'ultimo parametro che è il nome del file
 				while not(esisteFile(percorsoFile+Filename)):
 					Filename=raw_input("Inserisci nome del file da aggiungere: ")	
-				Filemd5=creazioneFilemd5(percorsoFile+Filename) #calcolo md5
-				adff(peer_socket,SessionID,Filemd5,Filename) #aggiunta file
+				Filemd5=creazioneFilemd5(percorsoFile+Filename) 									#Calcolo md5
+				adff(peer_socket,SessionID,Filemd5,Filename) 										#Aggiunta file
 				fileCondivisi[indiceLista]=FileCondivisi(percorsoFile+Filename,Filemd5)
 				indiceLista=indiceLista+1				
-#attendo risposte sul server d'ascolto
+																									#Attendo risposte sul server d'ascolto
 				peer_socket.close()
-		#...........................................................................................................		
-			if scelta=="2" :#rimozione file
-				#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-				peer_socket=creazioneSocket(IPP2P,"3000")  ########################################
+		
+			if scelta=="2" :																		#Rimozione file
+				peer_socket=creazioneSocket(IPP2P,"3000")
 				print "rimozione file in corso......."
 				percorsoFile="./immagine/"
 				Filename=raw_input("Inserisci nome del file.estensione da eliminare: ")
-				#Filename=percorsoFile.split(os.sep)[-1] #dal percorso del file recupero l'ultimo parametro che è il nome del file
-				Filemd5=creazioneFilemd5(percorsoFile+Filename) #calcolo md5
+				Filemd5=creazioneFilemd5(percorsoFile+Filename)
 				deff(peer_socket,SessionID,Filemd5)
-#attendo risposte sul server d'ascolto
+																									#Attendo risposte sul server d'ascolto
 				peer_socket.close()
-			#....................................................................................	
 			
-			if scelta=="3": #ricerca file
+			if scelta=="3": 																		#Ricerca file
 				indice=0
-				#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-				peer_socket=creazioneSocket(IPP2P,"3000")  #############################################
+				peer_socket=creazioneSocket(IPP2P,"3000")
  				print "ricerca file in corso....."
 				Ricerca=raw_input("Inserisci stringa di ricerca del file: ")
 				find(peer_socket,SessionID,Ricerca)
-				#ascolto20s=ThreadAscolto20s(PortaAscolto20s)
-				#ascolto20s.start()
-#RISPOSTA AFIN:va messo nel thread
 				peer_socket.shutdown(1)
-				risposta=leggi(peer_socket,7)#146B per ogni riga
+				risposta=leggi(peer_socket,7)
 				
 				while not risposta:
 					risposta=leggi(peer_socket,7)
 
-				
-				
-				#print "ho letto",risposta,"."
 				if not risposta:
 					print "ERRORE RICEZIONE PACCHETTO AFIN"
-					#sys.exit(1)
 				identificativo=risposta[0:4]
 				if identificativo !="AFIN":
 					print "ERRORE RISPOSTA IDENTIFICATIVO AFIN"
@@ -1459,54 +1297,46 @@ if scelta=="2": #PEER
 						indice=indice+1
 				
 				peer_socket.close()
-			#.........................................................................................	
-			if scelta== "4":#download file
+
+			if scelta== "4":																		#Download file
 				print "download file in corso....."
 				recvfn	= raw_input("Inserisci il nome del file.estensione per salvare: ")
-				loc ="./fileScaricati/" #raw_input("In che cartella salvare? ")
-				#if loc[-1] != os.sep: loc += os.sep
+				loc ="./fileScaricati/"
 				fd = os.open(loc+recvfn, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0600)
 				
 				indice=raw_input("Inserisci indice del file da scaricare: ")
 				IPP2PaltroPeer=salvataggio[int(indice)].IP
 				PortaP2PaltroPeer=salvataggio[int(indice)].PORTA
 				Filemd5=salvataggio[int(indice)].FILEMD5				
-				peer_socketPeer=retr(IPP2PaltroPeer,PortaP2PaltroPeer,Filemd5)#dowload col peer
-				#risposta al download dal peer
-				rispostaPeer=leggi(peer_socketPeer,10) #impostare bene le dimensioni
+				peer_socketPeer=retr(IPP2PaltroPeer,PortaP2PaltroPeer,Filemd5)						#Dowload col peer
+																									#Risposta al download dal peer
+				rispostaPeer=leggi(peer_socketPeer,10)
 				if not rispostaPeer:
 					print "ERRORE RICEZIONE PACCHETTO DOWNLOAD DAL PEER"
 					sys.exit(1)
 				identificativoPeer=rispostaPeer[0:4]
-				#print identificativoPeer
 				if identificativoPeer !="ARET":
 					print "ERRORE RISPOSTA DOWNLOAD PEER"
-				nChunk=int(rispostaPeer[4:10])  
-				#print nChunk
+				nChunk=int(rispostaPeer[4:10])
 				
 				conta=1	
 				while conta <= nChunk:
 					lenChunk=leggi(peer_socketPeer,5)					
-					lenChunk=int(lenChunk)	
-					#print lenChunk
-					#lenChunk=risposta[0:5]
-					#chunk=int(lenChunk)
+					lenChunk=int(lenChunk)
 					data=leggi(peer_socketPeer,lenChunk)						
 					os.write(fd, data)	
 					conta=conta+1
-					#print "conta: ",conta
 				print "Il file è stato salvato con successo!"
 				
 				os.close(fd)			
-				peer_socketPeer.close()  #chiudo la socket con il peer da cui ho effettuato il download
-			#..................................................................................
-			if scelta== "5": #Logout
-				#peer_socket=creazioneSocket(IPP2P,PortaP2P)
-				peer_socket=creazioneSocket(IPP2P,"3000")   ##################################################
+				peer_socketPeer.close()  															#Chiudo la socket con il peer da cui ho effettuato il download
+
+			if scelta== "5": 																		#Logout
+				peer_socket=creazioneSocket(IPP2P,"3000")
 				print "logout....."
 				logo(peer_socket,SessionID)
 				scriviLog("Inviato LOGO"+SessionID)
-				#risposta al logout
+																									#Risposta al logout
 				risposta=leggi(peer_socket,7) 
 				if not risposta:
 					print "ERRORE RICEZIONE PACCHETTO LOGOUT"
@@ -1519,7 +1349,7 @@ if scelta=="2": #PEER
 				nCopieCancellate=risposta[4:len(risposta)]
 				print "NUMERO COPIE CANCELLATE: ", nCopieCancellate
 			
-				#chiusura socket
+																									#Chiusura socket
 				peer_socket.close()				
 				ascolto.closeSocketACK()
 				break
